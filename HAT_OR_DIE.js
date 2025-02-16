@@ -98,7 +98,8 @@ var Game = {
 	restart_counter : 0,
 	consequtive_hits : 0,
 	hit_index : [0,0,0,0],
-	miss_index : [0,0,0,0]
+	miss_index : [0,0,0,0],
+	enemy_hit_index : [0,0,0,0]
 };
 
 Game.Compensate_for_bigger_screen = function() {
@@ -954,21 +955,21 @@ Game.draw_hits = function() {
 }
 
 Game.draw_enemy_hits = function() {
-	if(Game.hit_index[0] > 0){
+	if(Game.enemy_hit_index[0] > 0){
 		Game.enemy_hit_index[0] -= 1;
 		Game.drawImage(Game.up_arrow_hit, {x : 208, y : 118})
 	}
-	if(Game.hit_index[1] > 0){
+	if(Game.enemy_hit_index[1] > 0){
 		Game.enemy_hit_index[1] -= 1;
 		Game.drawImage(Game.right_arrow_hit, {x : 300, y : 120})
 	}	
-	if(Game.hit_index[2] > 0){
+	if(Game.enemy_hit_index[2] > 0){
 		Game.enemy_hit_index[2] -= 1;
-		Game.drawImage(Game.down_arrow_hit, {x : 511, y : 114})
+		Game.drawImage(Game.down_arrow_hit, {x : 111, y : 114})
 	}	
-	if(Game.hit_index[3] > 0){
+	if(Game.enemy_hit_index[3] > 0){
 		Game.enemy_hit_index[3] -= 1;
-		Game.drawImage(Game.left_arrow_hit, {x : 400, y : 126})
+		Game.drawImage(Game.left_arrow_hit, {x : 0, y : 126})
 	}
 }
 
@@ -1008,6 +1009,7 @@ Game.check_user_input = function() {
 			//Code for holding long arrows
 			if (Game.active_arrows_W.length != 0 && Game.active_arrows_W[Game.active_arrows_W.length - 1][0] < 180 && Game.active_arrows_W[Game.active_arrows_W.length - 1][0] > 50){
 				if(Game.active_arrows_W[Game.active_arrows_W.length - 1][1] > 0){
+					Game.hit_index[0] = hit_animation_duration;
 					Game.active_arrows_W[Game.active_arrows_W.length - 1][0] = arrow_hit_height;
 					Game.active_arrows_W[Game.active_arrows_W.length - 1][1] -= 1 / 60;
 					if(Game.active_arrows_W[Game.active_arrows_W.length - 1][1] == 0){
@@ -1052,6 +1054,7 @@ Game.check_user_input = function() {
 			//Code for holding long arrows
 			if (Game.active_arrows_D.length != 0 && Game.active_arrows_D[Game.active_arrows_D.length - 1][0] < 180 && Game.active_arrows_D[Game.active_arrows_D.length - 1][0] > 50){
 				if(Game.active_arrows_D[Game.active_arrows_D.length - 1][1] > 0){
+					Game.hit_index[1] = hit_animation_duration;
 					Game.active_arrows_D[Game.active_arrows_D.length - 1][0] = arrow_hit_height2;
 					Game.active_arrows_D[Game.active_arrows_D.length - 1][1] -= 1 / 60;
 					if(Game.active_arrows_D[Game.active_arrows_D.length - 1][1] == 0){
@@ -1096,6 +1099,7 @@ Game.check_user_input = function() {
 			//Code for holding long arrows
 			if (Game.active_arrows_S.length != 0 && Game.active_arrows_S[Game.active_arrows_S.length - 1][0] < 180 && Game.active_arrows_S[Game.active_arrows_S.length - 1][0] > 50){
 				if(Game.active_arrows_S[Game.active_arrows_S.length - 1][1] > 0){
+					Game.hit_index[2] = hit_animation_duration;
 					Game.active_arrows_S[Game.active_arrows_S.length - 1][0] = arrow_hit_height;
 					Game.active_arrows_S[Game.active_arrows_S.length - 1][1] -= 1 / 60;
 					if(Game.active_arrows_S[Game.active_arrows_S.length - 1][1] == 0){
@@ -1141,6 +1145,7 @@ Game.check_user_input = function() {
 			//Code for holding long arrows
 			if (Game.active_arrows_A.length != 0 && Game.active_arrows_A[Game.active_arrows_A.length - 1][0] < 180 && Game.active_arrows_A[Game.active_arrows_A.length - 1][0] > 50){
 				if(Game.active_arrows_A[Game.active_arrows_A.length - 1][1] > 0){
+					Game.hit_index[3] = hit_animation_duration;
 					Game.active_arrows_A[Game.active_arrows_A.length - 1][0] = arrow_hit_height2;
 					Game.active_arrows_A[Game.active_arrows_A.length - 1][1] -= 1 / 60;
 					if(Game.active_arrows_A[Game.active_arrows_A.length - 1][1] == 0){
@@ -1165,27 +1170,31 @@ Game.update_enemy_movement = function() {
 	Game.create_enemy_arrow();
 	const arrow_hit_height = 123;
 	const arrow_hit_height2 = 132;
-	
+	const hit_animation_duration = 3;
 	//Remove arrows when their time has come
 	if (Game.enemy_active_arrows_W.length != 0 && Game.enemy_active_arrows_W[Game.enemy_active_arrows_W.length - 1][0] < arrow_hit_height){
 		Game.enemy_last_input_time = Game.get_in_round_time();
 		Game.enemy_last_input = 2;
 		Game.enemy_active_arrows_W.pop();
+		Game.enemy_hit_index[0] = hit_animation_duration
 	}
 	if (Game.enemy_active_arrows_S.length != 0 && Game.enemy_active_arrows_S[Game.enemy_active_arrows_S.length - 1][0] < arrow_hit_height){
 		Game.enemy_last_input_time = Game.get_in_round_time();
 		Game.enemy_last_input = 3;
 		Game.enemy_active_arrows_S.pop();
+		Game.enemy_hit_index[2] = hit_animation_duration
 	}
 	if (Game.enemy_active_arrows_D.length != 0 && Game.enemy_active_arrows_D[Game.enemy_active_arrows_D.length - 1][0] < arrow_hit_height2){
 		Game.enemy_last_input_time = Game.get_in_round_time();
 		Game.enemy_last_input = 1;
 		Game.enemy_active_arrows_D.pop();
+		Game.enemy_hit_index[1] = hit_animation_duration
 	}
 	if (Game.enemy_active_arrows_A.length != 0 && Game.enemy_active_arrows_A[Game.enemy_active_arrows_A.length - 1][0] < arrow_hit_height2){
 		Game.enemy_last_input_time = Game.get_in_round_time();
 		Game.enemy_last_input = 0;
 		Game.enemy_active_arrows_A.pop();
+		Game.enemy_hit_index[3] = hit_animation_duration
 	}
 	//Enemy arrows are moved in Game.update_arrows()
 }
@@ -1391,6 +1400,7 @@ Game.draw = function () {
     Game.draw_hitmarkers();
 	Game.draw_enemy_hitmarkers();
 	Game.draw_hits();
+	Game.draw_enemy_hits();
 	Game.drawarrows();
 	Game.drawhealthbar();
 	if(Game.death_index > 110) {
