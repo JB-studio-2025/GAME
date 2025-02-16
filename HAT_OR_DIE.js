@@ -124,6 +124,7 @@ Game.start = async function () {
 	Game.load_UI_elements();
 	Game.load_DEATHING();
 	Game.load_musix();
+	Game.load_WIN_animation();
 	await Game.loadGameData();
 	Game.compensator();
 	Game.stored_player_sequence = JSON.parse(JSON.stringify(Game.arrow_sequence));
@@ -349,10 +350,23 @@ Game.load_WINNING = function() {
 	Game.pin7.src = "player_sprites/D/win/PIN/7.png"
 	Game.pin8 = new Image();
 	Game.pin8.src = "player_sprites/D/win/PIN/8.png"
-
-	
 	
 	Game.win_animation = [Game.win1,Game.win2,Game.win3,Game.win4,Game.win5,Game.win6,Game.win7,Game.win8,Game.win9,Game.win10]
+}
+
+Game.load_WIN_animation = function() {
+	Game.video = document.createElement('video');
+	Game.video.width = 1800;
+	Game.video.height = 900;
+	const videoSource = document.createElement('source');
+	videoSource.src = 'boing.mp4';
+	videoSource.type = 'video/mp4';
+	Game.video.appendChild(videoSource);
+	Game.video.autoplay = true;
+	Game.video.muted = false;
+	Game.video.pause();
+	Game.video.style.display = 'none';
+	document.body.appendChild(Game.video);
 }
 
 Game.load_astrid = function() {
@@ -545,8 +559,10 @@ Game.loadGameData = async function() {
 document.addEventListener( 'DOMContentLoaded', Game.start);
 
 Game.get_in_round_time = function() {
-	var d = new Date();
-	return (d.getTime() - Game.start_time) / 1000;
+	return Game.level_musix.currentTime
+	//OLD
+	//var d = new Date();
+	//return (d.getTime() - Game.start_time) / 1000;
 }
 
 // Function to resize the canvas
@@ -937,6 +953,25 @@ Game.draw_hits = function() {
 	}
 }
 
+Game.draw_enemy_hits = function() {
+	if(Game.hit_index[0] > 0){
+		Game.enemy_hit_index[0] -= 1;
+		Game.drawImage(Game.up_arrow_hit, {x : 208, y : 118})
+	}
+	if(Game.hit_index[1] > 0){
+		Game.enemy_hit_index[1] -= 1;
+		Game.drawImage(Game.right_arrow_hit, {x : 300, y : 120})
+	}	
+	if(Game.hit_index[2] > 0){
+		Game.enemy_hit_index[2] -= 1;
+		Game.drawImage(Game.down_arrow_hit, {x : 511, y : 114})
+	}	
+	if(Game.hit_index[3] > 0){
+		Game.enemy_hit_index[3] -= 1;
+		Game.drawImage(Game.left_arrow_hit, {x : 400, y : 126})
+	}
+}
+
 Game.check_user_input = function() {
 	if(Game.won){
 		return;
@@ -1308,6 +1343,15 @@ Game.create_arrow = function() {
 
 //Rendering
 
+Game.play_animation = function(file_name){
+	Game.video.style.display = 'block';
+    Game.video.play();
+    video.onended = function() {
+        Game.video.style.display = "none"
+        Game.video.pause();
+    };
+}
+
 Game.clearCanvas = function () {
     Game.canvasContext.clearRect(0, 0, Game.canvas.width, Game.canvas.height);
 };
@@ -1518,6 +1562,7 @@ Game.draw_win = function(){
 		else if(Game.win_index < 460){
 			Game.drawImage(Game.pin8, position);
 		}
+	Game.play_animation();
 	}
 	if(Game.win_index < 1000){
 		Game.win_index += 1;
