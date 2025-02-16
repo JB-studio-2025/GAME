@@ -358,15 +358,15 @@ Game.load_WIN_animation = function() {
 	Game.video = document.createElement('video');
 	Game.video.width = 1800;
 	Game.video.height = 900;
-	const videoSource = document.createElement('source');
-	videoSource.src = 'boing.mp4';
-	videoSource.type = 'video/mp4';
-	Game.video.appendChild(videoSource);
+	//const videoSource = document.createElement('source');
+	Game.video.src = 'boing.mp4';
+	Game.video.type = 'video/mp4';
+	//Game.video.appendChild(videoSource);
 	Game.video.autoplay = true;
 	Game.video.muted = false;
 	Game.video.pause();
 	Game.video.style.display = 'none';
-	document.body.appendChild(Game.video);
+	//document.body.appendChild(Game.video);
 }
 
 Game.load_astrid = function() {
@@ -418,7 +418,7 @@ Game.load_UI_elements = function() {
 	Game.loser_image = new Image();
 	Game.loser_image.src = "UI/LOSERHAHAHAHA.png"
 	Game.bakgrund = new Image();
-	Game.bakgrund.src = "UI/bakgrund5.png";
+	Game.bakgrund.src = "UI/babababababa.png";
 	Game.bakgrundKO = new Image();
 	Game.bakgrundKO.src = "UI/bakgrund.png";
 	
@@ -1344,12 +1344,17 @@ Game.create_arrow = function() {
 //Rendering
 
 Game.play_animation = function(file_name){
-	Game.video.style.display = 'block';
-    Game.video.play();
-    video.onended = function() {
-        Game.video.style.display = "none"
-        Game.video.pause();
-    };
+	if(!Game.video.ended){
+		//Game.video.style.display = 'block';
+		if(Game.video.paused){
+			Game.video.play();
+		}
+		Game.drawImage(Game.video, [0,0]);
+	}
+	else {
+    //Game.video.style.display = "none"
+		Game.video.pause();
+	}
 }
 
 Game.clearCanvas = function () {
