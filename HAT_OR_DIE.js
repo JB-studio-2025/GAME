@@ -598,7 +598,7 @@ Game.start_screen = function() {
 	}
 	Game.clearCanvas();
 	Game.draw_start_menu();
-	window.setTimeout(Game.start_screen, 1)
+	window.setTimeout(Game.start_screen, 1000/60)
 }
 
 Game.get_mouse_position = function() {
@@ -616,7 +616,7 @@ Game.mainLoop = function() {
     Game.update();
     Game.draw();
 	if(Game.in_menus == false){
-		window.setTimeout(Game.mainLoop, 1);
+		window.setTimeout(Game.mainLoop, 1000/60);
 	}
 };
 
@@ -1188,10 +1188,10 @@ Game.retry = function() {
 	}
 	Game.restart_counter += 1;
 	if(Game.restart_counter < 50){
-		window.setTimeout(Game.retry, 1);
+		window.setTimeout(Game.retry, 1000/60);
 	}
 	else{
-		window.setTimeout(Game.restart(),1);
+		window.setTimeout(Game.restart(),1000/60);
 	}
 }
 
@@ -1213,7 +1213,7 @@ Game.restart = function() {
 	Game.win_index = 0;
 	Game.name = "";
 	Game.name_inputted = false;
-	window.setTimeout(Game.start_screen,1);
+	window.setTimeout(Game.start_screen,1000/60);
 	return
 }
 
