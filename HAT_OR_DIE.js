@@ -146,22 +146,22 @@ Game.compensator = function() {
 
 Game.load_arrows = function() {
 	Game.left_arrow = new Image();
-	Game.left_arrow.src = "arrows/left arrow.png";
+	Game.left_arrow.src = "arrows/leftarrow.png";
 	Game.down_arrow = new Image();
-	Game.down_arrow.src = "arrows/down arrow.png";
+	Game.down_arrow.src = "arrows/downarrow.png";
 	Game.up_arrow = new Image();
-	Game.up_arrow.src = "arrows/up arrow.png";
+	Game.up_arrow.src = "arrows/uparrow.png";
 	Game.right_arrow = new Image();
-	Game.right_arrow.src = "arrows/right arrow.png";
+	Game.right_arrow.src = "arrows/rightarrow.png";
 	
 	Game.left_arrow_hit = new Image();
-	Game.left_arrow_hit.src = "arrows/left arrow hit.png";
+	Game.left_arrow_hit.src = "arrows/leftarrowhit.png";
 	Game.down_arrow_hit = new Image();
-	Game.down_arrow_hit.src = "arrows/down arrow hit.png";
+	Game.down_arrow_hit.src = "arrows/downarrowhit.png";
 	Game.up_arrow_hit = new Image();
-	Game.up_arrow_hit.src = "arrows/up arrow hit.png";
+	Game.up_arrow_hit.src = "arrows/uparrowhit.png";
 	Game.right_arrow_hit = new Image();
-	Game.right_arrow_hit.src = "arrows/right arrow hit.png";
+	Game.right_arrow_hit.src = "arrows/rightarrowhit.png";
 	
 	Game.down_arrow_miss = new Image();
 	Game.down_arrow_miss.src = "arrows/DOWN_WRONG.png";
