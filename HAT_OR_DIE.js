@@ -357,35 +357,35 @@ Game.load_WINNING = function() {
 
 Game.load_astrid = function() {
 	Game.eup1 = new Image();
-	Game.eup1.src = "astrid/Up-1.png";
+	Game.eup1.src = "Astrid/Up-1.png";
 	Game.eup2 = new Image();
-	Game.eup2.src = "astrid/Up-2.png";
+	Game.eup2.src = "Astrid/Up-2.png";
 	
 	Game.edown1 = new Image();
-	Game.edown1.src = "astrid/Down-1.png";
+	Game.edown1.src = "Astrid/Down-1.png";
 	Game.edown2 = new Image();
-	Game.edown2.src = "astrid/Down-2.png";
+	Game.edown2.src = "Astrid/Down-2.png";
 	
 	
 	Game.eright1 = new Image();
-	Game.eright1.src = "astrid/Right_-1.png";
+	Game.eright1.src = "Astrid/Right_-1.png";
 	Game.eright2 = new Image();
-	Game.eright2.src = "astrid/Right_-2.png";
+	Game.eright2.src = "Astrid/Right_-2.png";
 	
 	
 	Game.eleft1 = new Image();
-	Game.eleft1.src = "astrid/Left-1.png";
+	Game.eleft1.src = "Astrid/Left-1.png";
 	Game.eleft2 = new Image();
-	Game.eleft2.src = "astrid/Left-2.png";
+	Game.eleft2.src = "Astrid/Left-2.png";
 	
 	Game.ei1 = new Image();
-	Game.ei1.src = "astrid/export-1.png";
+	Game.ei1.src = "Astrid/export-1.png";
 	Game.ei2 = new Image();
-	Game.ei2.src = "astrid/export-2.png";
+	Game.ei2.src = "Astrid/export-2.png";
 	Game.ei3 = new Image();
-	Game.ei3.src = "astrid/export-3.png";
+	Game.ei3.src = "Astrid/export-3.png";
 	Game.ei4 = new Image();
-	Game.ei4.src = "astrid/export-4.png";
+	Game.ei4.src = "Astrid/export-4.png";
 	//Game.ei5 = new Image();
 	//Game.ei5.src = "./astrid/Idle-5.png";
 	
@@ -451,19 +451,19 @@ Game.load_UI_elements = function() {
 	Game.start_bunny9.src = "start/Start-22.png";
 	
 	Game.start_drapes1 = new Image();
-	Game.start_drapes1.src = "draperier/Drapes-1.png";
+	Game.start_drapes1.src = "Draperier/Drapes-1.png";
 	Game.start_drapes2 = new Image();
-	Game.start_drapes2.src = "draperier/Drapes-2.png";
+	Game.start_drapes2.src = "Draperier/Drapes-2.png";
 	Game.start_drapes3 = new Image();
-	Game.start_drapes3.src = "draperier/Drapes-3.png";
+	Game.start_drapes3.src = "Draperier/Drapes-3.png";
 	Game.start_drapes4 = new Image();
-	Game.start_drapes4.src = "draperier/Drapes-4.png";
+	Game.start_drapes4.src = "Draperier/Drapes-4.png";
 	Game.start_drapes5 = new Image();
-	Game.start_drapes5.src = "draperier/Drapes-5.png";
+	Game.start_drapes5.src = "Draperier/Drapes-5.png";
 	Game.start_drapes6 = new Image();
-	Game.start_drapes6.src = "draperier/Drapes-6.png";
+	Game.start_drapes6.src = "Draperier/Drapes-6.png";
 	Game.start_drapes7 = new Image();
-	Game.start_drapes7.src = "draperier/Drapes-7.png";
+	Game.start_drapes7.src = "Draperier/Drapes-7.png";
 	
 	Game.restart_drapes1 = new Image();
 	Game.restart_drapes1.src = "Draperier_retry/1.png";
