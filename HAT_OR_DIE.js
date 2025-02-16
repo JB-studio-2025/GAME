@@ -146,25 +146,25 @@ Game.compensator = function() {
 
 Game.load_arrows = function() {
 	Game.left_arrow = new Image();
-	Game.left_arrow.src = "arrows/leftarrow.png";
+	Game.left_arrow.src = "Arrows/leftarrow.png";
 	Game.down_arrow = new Image();
-	Game.down_arrow.src = "arrows/downarrow.png";
+	Game.down_arrow.src = "Arrows/downarrow.png";
 	Game.up_arrow = new Image();
-	Game.up_arrow.src = "arrows/uparrow.png";
+	Game.up_arrow.src = "Arrows/uparrow.png";
 	Game.right_arrow = new Image();
-	Game.right_arrow.src = "arrows/rightarrow.png";
+	Game.right_arrow.src = "Arrows/rightarrow.png";
 	
 	Game.left_arrow_hit = new Image();
-	Game.left_arrow_hit.src = "arrows/leftarrowhit.png";
+	Game.left_arrow_hit.src = "Arrows/leftarrowhit.png";
 	Game.down_arrow_hit = new Image();
-	Game.down_arrow_hit.src = "arrows/downarrowhit.png";
+	Game.down_arrow_hit.src = "Arrows/downarrowhit.png";
 	Game.up_arrow_hit = new Image();
-	Game.up_arrow_hit.src = "arrows/uparrowhit.png";
+	Game.up_arrow_hit.src = "Arrows/uparrowhit.png";
 	Game.right_arrow_hit = new Image();
-	Game.right_arrow_hit.src = "arrows/rightarrowhit.png";
+	Game.right_arrow_hit.src = "Arrows/rightarrowhit.png";
 	
 	Game.down_arrow_miss = new Image();
-	Game.down_arrow_miss.src = "arrows/DOWN_WRONG.png";
+	Game.down_arrow_miss.src = "Arrows/DOWN_WRONG.png";
 	
 }
 
