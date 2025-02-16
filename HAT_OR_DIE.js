@@ -273,7 +273,7 @@ Game.load_DEATHING = function() {
 
 Game.load_WINNING = function() {
 	Game.win00 = new Image();
-	Game.win00.src = "./player_sprites/_D/win/win1/finishhhhhhhhhh1.png"
+	Game.win00.src = "player_sprites/_D/win/win1/finishhhhhhhhhh1.png"//"./player_sprites/_D/win/win1/finishhhhhhhhhh1.png"
 	Game.win01 = new Image();
 	Game.win01.src = "./player_sprites/_D/win/win1/finishhhhhhhhhh2.png"
 	Game.win02 = new Image();
