@@ -130,8 +130,6 @@ Game.start = async function () {
 	Game.compensator();
 	Game.stored_player_sequence = JSON.parse(JSON.stringify(Game.arrow_sequence));
 	Game.stored_enemy_sequence = JSON.parse(JSON.stringify(Game.enemy_arrow_sequence));
-	//Game.resize_window();
-	//window.addEventListener('resize', Game.resize_window);
     window.setTimeout(Game.start_screen, 500);
 };
 
@@ -360,7 +358,7 @@ Game.load_WIN_animation = function() {
 	Game.video.width = 1800;
 	Game.video.height = 900;
 	//const videoSource = document.createElement('source');
-	Game.video.src = 'boing.mp4';
+	Game.video.src = 'DIE/fiiinish_a_long_1.mp4';
 	Game.video.type = 'video/mp4';
 	//Game.video.appendChild(videoSource);
 	Game.video.autoplay = true;
@@ -375,23 +373,29 @@ Game.load_astrid = function() {
 	Game.eup1.src = "Astrid/Up-1.png";
 	Game.eup2 = new Image();
 	Game.eup2.src = "Astrid/Up-2.png";
+	Game.eup3 = new Image();
+	Game.eup3.src = "Astrid/Up-3.png";
 	
 	Game.edown1 = new Image();
 	Game.edown1.src = "Astrid/Down-1.png";
 	Game.edown2 = new Image();
 	Game.edown2.src = "Astrid/Down-2.png";
-	
+	Game.edown3 = new Image();
+	Game.edown3.src = "Astrid/Down-2.png";
 	
 	Game.eright1 = new Image();
 	Game.eright1.src = "Astrid/Right_-1.png";
 	Game.eright2 = new Image();
 	Game.eright2.src = "Astrid/Right_-2.png";
-	
+	Game.eright3 = new Image();
+	Game.eright3.src = "Astrid/Right_-2.png";
 	
 	Game.eleft1 = new Image();
 	Game.eleft1.src = "Astrid/Left-1.png";
 	Game.eleft2 = new Image();
 	Game.eleft2.src = "Astrid/Left-2.png";
+	Game.eleft3 = new Image();
+	Game.eleft3.src = "Astrid/Left-2.png";
 	
 	Game.ei1 = new Image();
 	Game.ei1.src = "Astrid/export-1.png";
@@ -404,7 +408,7 @@ Game.load_astrid = function() {
 	//Game.ei5 = new Image();
 	//Game.ei5.src = "./astrid/Idle-5.png";
 	
-	Game.enemy_sprites = [[Game.eleft1, Game.eleft2],[Game.eright1, Game.eright2],[Game.eup1, Game.eup2],[Game.edown1, Game.edown2],[Game.ei1, Game.ei2, Game.ei3, Game.ei4]]
+	Game.enemy_sprites = [[Game.eleft1, Game.eleft2, Game.eleft3],[Game.eright1, Game.eright2, Game.eright3],[Game.eup1, Game.eup2, Game.eup3],[Game.edown1, Game.edown2, Game.edown3],[Game.ei1, Game.ei2, Game.ei3, Game.ei4]]
 }
 
 Game.load_UI_elements = function() {
@@ -540,7 +544,7 @@ Game.loadGameData = async function() {
         console.log("Game loaded:", Game.highscores);
     } else {
         console.log("No saved game found. Starting fresh.");
-		Game.highscores = [["none", "0"],["none", "0"],["none", "0"]];
+		Game.highscores = [["none", "2"],["none", "1"],["none", "0"]];
     }
 	  
 	/*
@@ -561,16 +565,6 @@ document.addEventListener( 'DOMContentLoaded', Game.start);
 
 Game.get_in_round_time = function() {
 	return Game.level_musix.currentTime
-	//OLD
-	//var d = new Date();
-	//return (d.getTime() - Game.start_time) / 1000;
-}
-
-// Function to resize the canvas
-Game.resize_window = function () {
-    Game.gameArea = document.getElementById('myCanvas');
-    Game.canvas.width = gameArea.offsetWidth;
-    Game.canvas.height = gameArea.offsetHeight;
 }
 
 Game.start_screen = function() {
@@ -650,104 +644,6 @@ Game.draw_start_menu = function() {
 	Game.drawImage(Game.press_start_text_oldhats, {x : 0, y : 0});
 	Game.drawImage(Game.difficulties, {x:0,y:0});
 	Game.draw_dRapes();
-}
-
-Game.scoreboard_logic = function(){
-	if(Game.win_index > 300){
-		Game.level_musix.pause();
-	}
-	if(Game.win_index > 360){
-		if(Game.name_inputted != true){
-			Game.inputname();
-			Game.draw_inputted_name();
-		}
-		else{
-			Game.draw_scoreboard();
-			Game.game_over = true;
-		}
-	}
-}
-
-Game.draw_score = function(){
-	Game.canvasContext.font = "36px Arial"; // Font size and family
-	Game.canvasContext.fillStyle = "white";  // Text color
-	Game.canvasContext.fillText(Game.name, 800, 200)
-}
-
-Game.save_the_score = function() {
-	console.log("innan, ", Game.highscores)
-	var newscoreboard = [];
-	var index = 0;
-	var inserted = false;
-	for(var score in Game.highscores){
-		if (Number(Game.highscores[score][1]) > Game.score && inserted != true){
-			newscoreboard.push(Game.highscores[index])
-			index += 1;
-		}
-		else if(Number(Game.highscores[score][1]) < Game.score && inserted != true){
-			newscoreboard.push([Game.name, String(Game.score)]);
-			inserted = true;
-		}
-		else {
-			newscoreboard.push(Game.highscores[index])
-			index += 1;
-		}
-	}
-	Game.highscores = newscoreboard;
-	localStorage.setItem("highscores", JSON.stringify(Game.highscores));
-	console.log("efter, " , Game.highscores)
-}
-
-Game.inputname = function(){
-	if (Keyboard.keyDown[13]) 
-	{
-		Game.save_the_score();
-		Game.name_inputted = true;
-		return
-    }
-	for (const key in Keyboard.keyDown) 
-	{
-		if (Keyboard.keyDown[key]){
-			if(Keyheld.keyHeld[key])
-			{
-				continue
-			}
-			else
-			{
-				Keyheld.keyHeld[key] = true;
-				if(Keyboard.keyDown[8])
-				{
-					Game.name = `${Game.name.slice(0, -1)}`;
-				}
-				else if(inverse_keys[key] != undefined){
-					Game.name += inverse_keys[key];
-				}
-			}
-		}
-		else
-		{
-			Keyheld.keyHeld[key] = false;
-		}
-	}
-}
-
-Game.draw_inputted_name = function(){
-	Game.canvasContext.font = "36px Arial"; // Font size and family
-	Game.canvasContext.fillStyle = "white";  // Text color
-	Game.canvasContext.fillText("Congratulations!", 780, 150)
-	Game.canvasContext.fillText("Your score is " + String(Game.score),780,200)
-	Game.canvasContext.fillText("Enter your name:", 780, 250)
-	Game.canvasContext.fillText(Game.name, 780, 300)
-}
-
-Game.draw_scoreboard = function(){
-	Game.canvasContext.font = "36px Arial"; // Font size and family
-	Game.canvasContext.fillStyle = "white";  // Text color
-	var ypos = 200
-	for(var score in Game.highscores){
-		Game.canvasContext.fillText(Game.highscores[score][0] + ", " + Game.highscores[score][1], 780, ypos)
-		ypos += 80
-	}
 }
 
 Game.draw_start_title = function() {
@@ -1257,29 +1153,39 @@ Game.restart = function() {
 	Game.win_index = 0;
 	Game.name = "";
 	Game.name_inputted = false;
+	Game.video.currentTime = 0;
+	Game.video.pause();
 	window.setTimeout(Game.start_screen,1000/60);
 	return
 }
 
 Game.update = function () {
 	if(Game.game_over){
-		console.log("GAME OVER")
+		if (Game.won == false && Game.death_index < 500) {
+			Game.death_index += 1;
+		}
 		if(Mouse.leftDown) {
 			Game.in_menus = true;
 			Game.retry()
 		}
-		return
 	};
-	if (Game.level_musix.paused) {
-    Game.level_musix.play();
+	if(Game.won){
+		Game.scoreboard_logic();
+		if(Game.win_index < 2000){
+			Game.win_index += 1;
+		}
+		return
 	}
-    //Game.level_musix.play();
+	if (Game.level_musix.paused && !Game.won) {
+		Game.level_musix.play();
+	}
 	Game.check_user_input();
 	Game.update_enemy_movement();
 	Game.update_arrows();
 	Game.create_arrow();
 	Game.check_for_losers();
 	Game.check_for_winners();
+	
 };
 
 Game.check_for_winners = function() {
@@ -1300,7 +1206,7 @@ Game.check_for_winners = function() {
 }
 
 Game.check_for_losers = function() {
-	if(Game.player_health == 0) {
+	if(Game.player_health <= 0) {
 		Game.game_over = true;
 		Game.level_musix.pause();
 	}
@@ -1360,10 +1266,6 @@ Game.play_animation = function(file_name){
 		}
 		Game.drawImage(Game.video, [0,0]);
 	}
-	else {
-    //Game.video.style.display = "none"
-		Game.video.pause();
-	}
 }
 
 Game.clearCanvas = function () {
@@ -1379,12 +1281,11 @@ Game.drawImage = function (sprite, position) {
 };
 
 Game.draw_background = function() {
-	if(Game.game_over == false){
-	Game.drawImage(Game.bakgrund, {x : 0, y : 0})
+	if (Game.game_over && !Game.won){
+	Game.drawImage(Game.bakgrundKO, {x : 0, y : 0});
+	return;
 	}
-	else {
-	Game.drawImage(Game.bakgrundKO, {x : 0, y : 0})
-	}
+	Game.drawImage(Game.bakgrund, {x : 0, y : 0});
 }
 
 Game.draw_loser_text = function() {
@@ -1394,30 +1295,38 @@ Game.draw_loser_text = function() {
 Game.draw = function () {
 	Game.draw_background();
 	Game.draw_player(); 
-	if(Game.game_over == false) {
+	if(!Game.game_over){
 		Game.draw_enemy();
 	}
-    Game.draw_hitmarkers();
-	Game.draw_enemy_hitmarkers();
-	Game.draw_hits();
-	Game.draw_enemy_hits();
-	Game.drawarrows();
-	Game.drawhealthbar();
-	if(Game.death_index > 110) {
-		Game.draw_loser_text();
+	if(Game.game_over == false && Game.won == false) {
+		Game.draw_hitmarkers();
+		Game.draw_enemy_hitmarkers();
+		Game.draw_hits();
+		Game.draw_enemy_hits();
+		Game.drawarrows();
+		Game.drawhealthbar();
 	}
+	
+	if(Game.game_over && Game.won == false){
+		Game.draw_game_over();
+		if(Game.death_index > 110) {
+			Game.draw_loser_text();
+		}
+		return
+	}
+
 	if(Game.won){
-		Game.scoreboard_logic();
+		Game.draw_win();
 	}
 };
 
 Game.draw_player = function() {
 	if(Game.game_over && Game.won == false){
-		Game.draw_game_over();
+		//Game.draw_game_over();
 		return
 	}
 	else if(Game.won == true){
-		Game.draw_win();
+		//Game.draw_win();
 		if(Game.win_index > 100){
 			return
 		}
@@ -1461,9 +1370,8 @@ Game.draw_player = function() {
 
 Game.draw_win = function(){
 	var position = {x:0, y:0}
-	if(Game.win_index > 100)
-	{
-		if(Game.win_index < 120){
+	if(Game.win_index > 100){
+		/*if(Game.win_index < 120){
 			Game.drawImage(Game.win00, position);
 		}
 		else if(Game.win_index < 140){
@@ -1576,11 +1484,17 @@ Game.draw_win = function(){
 		}
 		else if(Game.win_index < 460){
 			Game.drawImage(Game.pin8, position);
+		}*/
+		Game.drawImage(Game.win10, position)
+		Game.play_animation();
+		if(Game.win_index > 1300) {
+			if(Game.name_inputted != true){
+				Game.draw_inputted_name(true);
+			}
+			else{
+				Game.draw_scoreboard();
+			}
 		}
-	Game.play_animation();
-	}
-	if(Game.win_index < 1000){
-		Game.win_index += 1;
 	}
 }
 
@@ -1628,20 +1542,26 @@ Game.draw_game_over = function() {
 	else {
 		Game.drawImage(Game.death_animation[13], position);
 	}
-	if (Game.death_index < 200) {
-		Game.death_index += 1;
+	if(Game.death_index > 240) {
+		Game.
 	}
+	//if (Game.death_index < 200) {
+	//	Game.death_index += 1;
+	//}
 }
 
 Game.draw_enemy = function() {
 	if (Game.get_in_round_time() - Game.enemy_last_input_time < 0.1){
 		Game.drawImage(Game.enemy_sprites[Game.enemy_last_input][0], {x : 380, y : 10})
 	}
-	else if (Game.get_in_round_time() - Game.enemy_last_input_time < 2){
+	else if (Game.get_in_round_time() - Game.enemy_last_input_time < 0.2){
 		Game.drawImage(Game.enemy_sprites[Game.enemy_last_input][1], {x : 380, y : 10})
 	}
+	else if (Game.get_in_round_time() - Game.enemy_last_input_time < 2){
+		Game.drawImage(Game.enemy_sprites[Game.enemy_last_input][2], {x : 380, y : 10})
+	}
 	else {
-		Game.draw_idle_enemy();//drawImage(Game.enemy_sprites[Game.enemy_last_input][1], {x : 380, y : 10})
+		Game.draw_idle_enemy();
 	}
 }
 
@@ -1766,5 +1686,106 @@ Game.drawhealthbar = function() {
 	}
 	else {
 		Game.drawImage(Game.healthhat, {x : 400 + 42 * Game.player_health - 170, y : 774 - 100})	
+	}
+}
+
+Game.scoreboard_logic = function(){
+	if(Game.win_index > 300){
+		Game.level_musix.pause();
+	}
+	if(Game.win_index > 1300){
+		if(Game.name_inputted != true){
+			Game.inputname();
+		}
+		else{
+			Game.game_over = true;
+		}
+	}
+}
+
+Game.save_the_score = function() {
+	console.log("innan, ", Game.highscores)
+	var newscoreboard = [];
+	var length = Game.highscores.length
+	var inserted = false;
+	var i = 0;
+	while ( i < length ) {
+		if (Number(Game.highscores[i][1]) > Game.score && inserted != true){
+			newscoreboard.push(Game.highscores[i])
+			i += 1;
+		}
+		else if(Number(Game.highscores[i][1]) < Game.score && inserted != true){
+			newscoreboard.push([Game.name, String(Game.score)]);
+			inserted = true;
+		}
+		
+		else {
+			newscoreboard.push(Game.highscores[i])
+			i += 1;
+		}
+	}
+	if (!inserted) {
+		console.log("hah, sämst")
+		newscoreboard.push([Game.name, String(Game.score)]);
+	}
+	Game.highscores = newscoreboard;
+	localStorage.setItem("highscores", JSON.stringify(Game.highscores));
+	console.log("efter, " , Game.highscores)
+}
+
+Game.inputname = function(){
+	if (Keyboard.keyDown[13]) 
+	{
+		Game.save_the_score();
+		Game.name_inputted = true;
+		return
+    }
+	for (const key in Keyboard.keyDown) 
+	{
+		if (Keyboard.keyDown[key]){
+			if(Keyheld.keyHeld[key])
+			{
+				continue
+			}
+			else
+			{
+				Keyheld.keyHeld[key] = true;
+				if(Keyboard.keyDown[8])
+				{
+					Game.name = `${Game.name.slice(0, -1)}`;
+				}
+				else if(inverse_keys[key] != undefined){
+					Game.name += inverse_keys[key];
+				}
+			}
+		}
+		else
+		{
+			Keyheld.keyHeld[key] = false;
+		}
+	}
+}
+
+Game.draw_inputted_name = function(won){
+	Game.canvasContext.font = "36px Arial"; // Font size and family
+	Game.canvasContext.fillStyle = "white";  // Text color
+	if(won){
+		Game.canvasContext.fillText("Congratulations!", 780, 150)
+	}
+	else{
+		Game.canvasContext.fillText("You tried...", 780, 150)
+	}
+	Game.canvasContext.fillText("Your score is " + String(Game.score),780,200)
+	Game.canvasContext.fillText("Enter your name:", 780, 250)
+	Game.canvasContext.fillText(Game.name, 780, 300)
+}
+
+Game.draw_scoreboard = function(){
+	Game.canvasContext.font = "36px Arial"; // Font size and family
+	Game.canvasContext.fillStyle = "white";  // Text color
+	var ypos = 200
+	for(var score in Game.highscores){
+		Game.canvasContext.fillText(Game.highscores[score][0] + ", " + Game.highscores[score][1], 780, ypos)
+		ypos += 80
 	}
 }
