@@ -1543,7 +1543,7 @@ Game.draw_game_over = function() {
 		Game.drawImage(Game.death_animation[13], position);
 	}
 	if(Game.death_index > 240) {
-		Game.
+		return
 	}
 	//if (Game.death_index < 200) {
 	//	Game.death_index += 1;
