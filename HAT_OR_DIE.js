@@ -500,6 +500,15 @@ Game.load_UI_elements = function() {
 	
 	Game.scoreboard_button = new Image();
 	Game.scoreboard_button.src = "1.png"
+	Game.scoreboard_text = new Image();
+	Game.scoreboard_text.src = "end_animations/acoewboard000.png"
+	Game.scoreboard_background = new Image();
+	Game.scoreboard_background.src = "end_animations/end.jpg"
+	Game.scoreboard_IDA_1 = new Image();
+	Game.scoreboard_IDA_1.src = "end_animations/ida_1.png";
+	Game.scoreboard_IDA_2 = new Image();
+	Game.scoreboard_IDA_2.src = "end_animations/ida_2.png";
+	
 }
 
 Game.load_musix = function() {
@@ -1652,10 +1661,10 @@ Game.inputname = function(){
 	}
 }
 
-Game.draw_inputted_name = function(won){
+Game.draw_inputted_name = function(){
 	Game.canvasContext.font = "36px Arial"; // Font size and family
 	Game.canvasContext.fillStyle = "white";  // Text color
-	if(won){
+	if(Game.won){
 		Game.canvasContext.fillText("Congratulations!", 780, 150)
 	}
 	else{
@@ -1667,10 +1676,14 @@ Game.draw_inputted_name = function(won){
 }
 
 Game.draw_scoreboard = function(){
+	const pos = {x : 0, y : 0}
 	if(Game.name_inputted != true){
-		Game.draw_inputted_name(true);
+		Game.draw_inputted_name();
 	}
 	else{
+		Game.drawImage(Game.scoreboard_background, pos);
+		Game.drawImage(Game.scoreboard_text, pos);
+		Game.drawImage(Game.scoreboard_IDA_1, pos);
 		Game.canvasContext.font = "36px Times New Roman"; // Font size and family
 		Game.canvasContext.fillStyle = "white";  // Text color
 		var ypos = 200
