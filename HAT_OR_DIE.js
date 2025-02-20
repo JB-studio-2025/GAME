@@ -1598,7 +1598,7 @@ Game.scoreboard_logic = function(){
 		Game.inputname();
 	}
 	else{
-		if(Game.get_mouse_position([1500,1800],[600,900])){
+		if(Game.get_mouse_position([1500,1800],[600,900]) && Mouse.leftDown){
 			Game.in_menus = true;
 		}
 	}
@@ -1676,18 +1676,19 @@ Game.draw_inputted_name = function(){
 	if(Game.won){
 		Game.drawImage(Game.scoreboard_congrats, {x:0, y:0});
 		Game.canvasContext.fillText(String(Game.score),900,330)
-		Game.canvasContext.fillText(Game.name, 900, 600)
 		if(Game.name.length > 5){
 			Game.drawImage(Game.fattie, {x:0, y:0});
+			Game.canvasContext.fillStyle = "f6985e";
 		}
+		Game.canvasContext.fillText(Game.name, 900, 600)
 	}
 	else{
 		//Game.drawImage(Game.scoreboard_congrats, {x:0, y:0});
 		Game.canvasContext.fillText(String(Game.score),900,330)
 		if(Game.name.length > 9){
 			Game.drawImage(Game.fattie, {x:0, y:0});
+			Game.canvasContext.fillStyle = "f6985e";
 		}
-		Game.canvasContext.fillStyle = "red";
 		Game.canvasContext.fillText(Game.name, 900, 600)
 	}
 }
@@ -1707,10 +1708,22 @@ Game.draw_scoreboard = function(){
 		var ypos = 200
 		
 		for(let score = 0; score < 10; score++){
+			if(score + 20 * Game.scoreboard_page >= Game.highscores.length){
+				break
+			}
 			Game.canvasContext.fillText(Game.highscores[score + 10 * Game.scoreboard_page][0], 200, ypos)
-			Game.canvasContext.fillText(Game.highscores[score + 10 * Game.scoreboard_page][1], 700, ypos)
+			Game.canvasContext.fillText(Game.highscores[score + 10 * Game.scoreboard_page][1], 500, ypos)
 			ypos += 60
 		}
-		Game.drawImage(Game.scoreboard_button, {x : 1500, y : 500})
+		ypos = 200;
+		for(let score = 10; score < 20; score++){
+			if(score + 20 * Game.scoreboard_page >= Game.highscores.length){
+				break
+			}
+			Game.canvasContext.fillText(Game.highscores[score + 10 * Game.scoreboard_page][0], 700, ypos)
+			Game.canvasContext.fillText(Game.highscores[score + 10 * Game.scoreboard_page][1], 1000, ypos)
+			ypos += 60
+		}
+		//Game.drawImage(Game.scoreboard_button, {x : 1500, y : 500})
 	}
 }
