@@ -1165,12 +1165,7 @@ Game.update = function () {
 		Game.loser_logic();
 	}
 	else if(Game.won){
-		//you won
-		Game.scoreboard_logic();
-		if(Game.win_index < 2000){
-			Game.win_index += 1;
-		}
-		return
+		Game.winner_logic();
 	}
 	else if (Game.level_musix.paused) {
 		Game.level_musix.play();
@@ -1195,6 +1190,19 @@ Game.loser_logic = function() {//COPE
 	}//COPE
 	//COPE
 }//COPE
+
+Game.winner_logic = function() {
+	Game.scoreboard_logic();
+	if(Game.win_index > 300){
+		Game.level_musix.pause();
+	}
+	if(Game.win_index < 2000){
+		Game.win_index += 1;
+	}
+	if(Game.win_index > 1300){
+		Game.scoreboard_logic();
+	}
+}
 
 Game.check_for_winners = function() {
 	if(Game.arrow_sequence.length == 1){
@@ -1380,12 +1388,7 @@ Game.draw_win = function(){
 		Game.drawImage(Game.win10, position)
 		Game.play_animation();
 		if(Game.win_index > 1300) {
-			if(Game.name_inputted != true){
-				Game.draw_inputted_name(true);
-			}
-			else{
-				Game.draw_scoreboard();
-			}
+			Game.draw_scoreboard();
 		}
 	}
 }
@@ -1576,21 +1579,18 @@ Game.drawhealthbar = function() {
 }
 
 Game.scoreboard_logic = function(){
-	if(Game.win_index > 300){
-		Game.level_musix.pause();
+	if(Game.name_inputted != true){
+		Game.inputname();
 	}
-	if(Game.win_index > 1300){
-		if(Game.name_inputted != true){
-			Game.inputname();
-		}
-		else{
-			Game.game_over = true;
+	else{
+		if(Game.get_mouse_position([1500,1800],[600,900])){
+			Game.in_menus = true;
 		}
 	}
 }
 
 Game.save_the_score = function() {
-	console.log("innan, ", Game.highscores)
+	//console.log("innan, ", Game.highscores)
 	var newscoreboard = [];
 	var length = Game.highscores.length
 	var inserted = false;
@@ -1616,7 +1616,7 @@ Game.save_the_score = function() {
 	}
 	Game.highscores = newscoreboard;
 	localStorage.setItem("highscores", JSON.stringify(Game.highscores));
-	console.log("efter, " , Game.highscores)
+	//console.log("efter, " , Game.highscores)
 }
 
 Game.inputname = function(){
@@ -1667,12 +1667,17 @@ Game.draw_inputted_name = function(won){
 }
 
 Game.draw_scoreboard = function(){
-	Game.canvasContext.font = "36px Times New Roman"; // Font size and family
-	Game.canvasContext.fillStyle = "white";  // Text color
-	var ypos = 200
-	for(var score in Game.highscores){
-		Game.canvasContext.fillText(Game.highscores[score][0] + ", " + Game.highscores[score][1], 780, ypos)
-		ypos += 80
+	if(Game.name_inputted != true){
+		Game.draw_inputted_name(true);
 	}
-	Game.drawImage(Game.scoreboard_button, {x : 1500, y : 500})
+	else{
+		Game.canvasContext.font = "36px Times New Roman"; // Font size and family
+		Game.canvasContext.fillStyle = "white";  // Text color
+		var ypos = 200
+		for(var score in Game.highscores){
+			Game.canvasContext.fillText(Game.highscores[score][0] + ", " + Game.highscores[score][1], 780, ypos)
+			ypos += 80
+		}
+		Game.drawImage(Game.scoreboard_button, {x : 1500, y : 500})
+	}
 }
