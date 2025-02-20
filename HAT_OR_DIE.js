@@ -36,7 +36,8 @@ function handleMouseMove(evt) {
 
 var Mouse = {
 	position : { x : 0, y : 0 },
-    leftDown : false
+    leftDown : false,
+	held : false
 };
 
 var Keys = {
@@ -513,7 +514,16 @@ Game.load_UI_elements = function() {
 	Game.scoreboard_congrats.src = "UI/congrats.png";
 	Game.fattie = new Image();
 	Game.fattie.src = "UI/fattie.png";
-	
+	Game.scoreboard_page_pic = new Image();
+	Game.scoreboard_page_pic.src = "end_animations/page.png"	
+	Game.scoreboard_page_left = new Image();
+	Game.scoreboard_page_left.src = "end_animations/arrow_left.png"
+	Game.scoreboard_page_left_glow = new Image();
+	Game.scoreboard_page_left_glow.src = "end_animations/blur_left.png"
+	Game.scoreboard_page_right = new Image();
+	Game.scoreboard_page_right.src = "end_animations/arrow_right.png"
+	Game.scoreboard_page_right_glow = new Image();
+	Game.scoreboard_page_right_glow.src = "end_animations/blur_right.png"
 }
 
 Game.load_musix = function() {
@@ -1678,7 +1688,7 @@ Game.draw_inputted_name = function(){
 		Game.canvasContext.fillText(String(Game.score),900,330)
 		if(Game.name.length > 5){
 			Game.drawImage(Game.fattie, {x:0, y:0});
-			Game.canvasContext.fillStyle = "f6985e";
+			Game.canvasContext.fillStyle = "#f6985e";
 		}
 		Game.canvasContext.fillText(Game.name, 900, 600)
 	}
@@ -1687,7 +1697,7 @@ Game.draw_inputted_name = function(){
 		Game.canvasContext.fillText(String(Game.score),900,330)
 		if(Game.name.length > 9){
 			Game.drawImage(Game.fattie, {x:0, y:0});
-			Game.canvasContext.fillStyle = "f6985e";
+			Game.canvasContext.fillStyle = "#f6985e";
 		}
 		Game.canvasContext.fillText(Game.name, 900, 600)
 	}
@@ -1697,7 +1707,7 @@ Game.draw_scoreboard = function(){
 	const pos = {x : 0, y : 0}
 	if(Game.name_inputted != true){
 		Game.draw_inputted_name();
-	}
+	}	
 	else{
 		Game.drawImage(Game.scoreboard_background, pos);
 		Game.drawImage(Game.scoreboard_text, pos);
@@ -1705,14 +1715,13 @@ Game.draw_scoreboard = function(){
 		Game.canvasContext.font = "40px Times New Roman";
 		Game.canvasContext.fillStyle = "white";
 		Game.canvasContext.textAlign = "left";
-		var ypos = 200
-		
+		var ypos = 200;
 		for(let score = 0; score < 10; score++){
 			if(score + 20 * Game.scoreboard_page >= Game.highscores.length){
 				break
 			}
-			Game.canvasContext.fillText(Game.highscores[score + 10 * Game.scoreboard_page][0], 200, ypos)
-			Game.canvasContext.fillText(Game.highscores[score + 10 * Game.scoreboard_page][1], 500, ypos)
+			Game.canvasContext.fillText(Game.highscores[score + 20 * Game.scoreboard_page][0], 200, ypos)
+			Game.canvasContext.fillText(Game.highscores[score + 20 * Game.scoreboard_page][1], 500, ypos)
 			ypos += 60
 		}
 		ypos = 200;
@@ -1720,9 +1729,35 @@ Game.draw_scoreboard = function(){
 			if(score + 20 * Game.scoreboard_page >= Game.highscores.length){
 				break
 			}
-			Game.canvasContext.fillText(Game.highscores[score + 10 * Game.scoreboard_page][0], 700, ypos)
-			Game.canvasContext.fillText(Game.highscores[score + 10 * Game.scoreboard_page][1], 1000, ypos)
+			Game.canvasContext.fillText(Game.highscores[score + 20 * Game.scoreboard_page][0], 700, ypos)
+			Game.canvasContext.fillText(Game.highscores[score + 20 * Game.scoreboard_page][1], 1000, ypos)
 			ypos += 60
+		}
+		if(Game.highscores.length > 20) {
+			Game.drawImage(Game.scoreboard_page_pic, pos);
+		}
+		if(Game.scoreboard_page != 0){
+			Game.drawImage(Game.scoreboard_page_left, pos);
+			if(Game.get_mouse_position([0,900],[0,800])){
+				Game.drawImage(Game.scoreboard_page_left_glow, pos);
+				if(Mouse.leftDown && Mouse.held == false){
+					Game.scoreboard_page--;
+					Mouse.held = true;
+				}
+			}
+		}
+		if((Game.scoreboard_page + 1) * 20 < Game.highscores.length){
+			Game.drawImage(Game.scoreboard_page_right, pos);
+			if(Game.get_mouse_position([900,1800],[0,800])){
+				Game.drawImage(Game.scoreboard_page_right_glow, pos);
+				if(Mouse.leftDown && Mouse.held == false){
+					Game.scoreboard_page++;
+					Mouse.held = true;
+				}
+			}
+		}
+		if(Mouse.leftDown == false){
+			Mouse.held = false;
 		}
 		//Game.drawImage(Game.scoreboard_button, {x : 1500, y : 500})
 	}
