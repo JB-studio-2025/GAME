@@ -1637,9 +1637,11 @@ Game.save_the_score = function() {
 Game.inputname = function(){
 	if (Keyboard.keyDown[13]) 
 	{
-		Game.save_the_score();
-		Game.name_inputted = true;
-		return
+		if(Game.name.length < 10){
+			Game.save_the_score();
+			Game.name_inputted = true;
+			return
+		}
     }
 	for (const key in Keyboard.keyDown) 
 	{
@@ -1682,10 +1684,11 @@ Game.draw_inputted_name = function(){
 	else{
 		//Game.drawImage(Game.scoreboard_congrats, {x:0, y:0});
 		Game.canvasContext.fillText(String(Game.score),900,330)
-		Game.canvasContext.fillText(Game.name, 900, 600)
-		if(Game.name.length > 5){
+		if(Game.name.length > 9){
 			Game.drawImage(Game.fattie, {x:0, y:0});
 		}
+		Game.canvasContext.fillStyle = "red";
+		Game.canvasContext.fillText(Game.name, 900, 600)
 	}
 }
 
@@ -1698,14 +1701,15 @@ Game.draw_scoreboard = function(){
 		Game.drawImage(Game.scoreboard_background, pos);
 		Game.drawImage(Game.scoreboard_text, pos);
 		Game.drawImage(Game.scoreboard_IDA_1, pos);
-		Game.canvasContext.font = "60px Times New Roman";
+		Game.canvasContext.font = "40px Times New Roman";
 		Game.canvasContext.fillStyle = "white";
 		Game.canvasContext.textAlign = "left";
 		var ypos = 200
-		for(var score in Game.highscores){
-			Game.canvasContext.fillText(Game.highscores[score][0], 200, ypos)
-			Game.canvasContext.fillText(Game.highscores[score][1], 700, ypos)
-			ypos += 80
+		
+		for(let score = 0; score < 10; score++){
+			Game.canvasContext.fillText(Game.highscores[score + 10 * Game.scoreboard_page][0], 200, ypos)
+			Game.canvasContext.fillText(Game.highscores[score + 10 * Game.scoreboard_page][1], 700, ypos)
+			ypos += 60
 		}
 		Game.drawImage(Game.scoreboard_button, {x : 1500, y : 500})
 	}
