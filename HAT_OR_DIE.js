@@ -91,8 +91,9 @@ var Game = {
 	mouse_compensation : [0,0],
 	game_over : false,
 	won : false,
+	lost : false,
 	name : "",
-	score : 1,
+	score : 0,
 	name_inputted : false,
 	in_menus : true,
 	restart_counter : 0,
@@ -497,6 +498,8 @@ Game.load_UI_elements = function() {
 	Game.restart_drapes6 = new Image();
 	Game.restart_drapes6.src = "Draperier_retry/6.png";
 	
+	Game.scoreboard_button = new Image();
+	Game.scoreboard_button.src = "1.png"
 }
 
 Game.load_musix = function() {
@@ -568,7 +571,7 @@ Game.get_in_round_time = function() {
 }
 
 Game.start_screen = function() {
-	if(Game.get_mouse_position() == 1) {
+	if(Game.get_mouse_position([700,1000],[440, 520])) {
 		if(Game.start_menu_position != true) {
 			if(Game.start_menu_counter > 170){
 				Game.start_menu_counter = 170;
@@ -584,7 +587,7 @@ Game.start_screen = function() {
 			return
 		}
 	}
-	else if(Game.get_mouse_position() == 2){
+	else if(Game.get_mouse_position([750, 975],[540, 620])){
 		if(Game.start_menu_position != false) {
 			if(Game.start_menu_counter > 170){
 				Game.start_menu_counter = 170;
@@ -612,14 +615,11 @@ Game.start_screen = function() {
 	window.setTimeout(Game.start_screen, 1000/60)
 }
 
-Game.get_mouse_position = function() {
-	if (Mouse.position.y > 440 && Mouse.position.y < 520 && Mouse.position.x < 1000 && Mouse.position.x > 700) {
-		return 1;
+Game.get_mouse_position = function(xrange, yrange) {
+	if (Mouse.position.y > yrange[0] && Mouse.position.y < yrange[1] && Mouse.position.x < xrange[1] && Mouse.position.x > xrange[0]){
+		return true;
 	}
-	if (Mouse.position.y > 540 && Mouse.position.y < 620 && Mouse.position.x < 975 && Mouse.position.x > 750) {
-		return 2;
-	}
-	return undefined;
+	return false;
 }
 
 Game.mainLoop = function() {
@@ -1148,6 +1148,7 @@ Game.restart = function() {
 	Game.enemy_last_input_time = -3;
 	Game.score = 0;
 	Game.won = false;
+	Game.lost = false;
 	Game.start_menu_counter = -120;
 	Game.restart_counter = 0;
 	Game.win_index = 0;
@@ -1160,23 +1161,18 @@ Game.restart = function() {
 }
 
 Game.update = function () {
-	if(Game.game_over){
-		if (Game.won == false && Game.death_index < 500) {
-			Game.death_index += 1;
-		}
-		if(Mouse.leftDown) {
-			Game.in_menus = true;
-			Game.retry()
-		}
-	};
-	if(Game.won){
+	if(Game.lost){
+		Game.loser_logic();
+	}
+	else if(Game.won){
+		//you won
 		Game.scoreboard_logic();
 		if(Game.win_index < 2000){
 			Game.win_index += 1;
 		}
 		return
 	}
-	if (Game.level_musix.paused && !Game.won) {
+	else if (Game.level_musix.paused) {
 		Game.level_musix.play();
 	}
 	Game.check_user_input();
@@ -1185,19 +1181,28 @@ Game.update = function () {
 	Game.create_arrow();
 	Game.check_for_losers();
 	Game.check_for_winners();
-	
+	if(Game.in_menus){
+		Game.retry()
+	}
 };
+
+Game.loser_logic = function() {//COPE
+	if(Game.get_mouse_position([0,1800],[0,900]) && Mouse.leftDown){//COPE
+		Game.in_menus = true;//COPE
+	}//COPE
+	if (Game.death_index < 500) {//COPE
+		Game.death_index += 1;//COPE
+	}//COPE
+	//COPE
+}//COPE
 
 Game.check_for_winners = function() {
 	if(Game.arrow_sequence.length == 1){
-		//console.log("1")
 		if(Game.active_arrows_W.length == 0){
-			//console.log("2")
 			if(Game.active_arrows_A.length == 0){
 				if(Game.active_arrows_S.length == 0){
 					if(Game.active_arrows_D.length == 0){
 						Game.won = true;
-						//console.log("YOU WON!!!")
 					}
 				}
 			}
@@ -1207,7 +1212,7 @@ Game.check_for_winners = function() {
 
 Game.check_for_losers = function() {
 	if(Game.player_health <= 0) {
-		Game.game_over = true;
+		Game.lost = true;
 		Game.level_musix.pause();
 	}
 }
@@ -1281,9 +1286,9 @@ Game.drawImage = function (sprite, position) {
 };
 
 Game.draw_background = function() {
-	if (Game.game_over && !Game.won){
-	Game.drawImage(Game.bakgrundKO, {x : 0, y : 0});
-	return;
+	if (Game.lost){
+		Game.drawImage(Game.bakgrundKO, {x : 0, y : 0});
+		return;
 	}
 	Game.drawImage(Game.bakgrund, {x : 0, y : 0});
 }
@@ -1295,19 +1300,20 @@ Game.draw_loser_text = function() {
 Game.draw = function () {
 	Game.draw_background();
 	Game.draw_player(); 
-	if(!Game.game_over){
+	if(!Game.lost){
 		Game.draw_enemy();
 	}
-	if(Game.game_over == false && Game.won == false) {
+	if(Game.lost == false && Game.won == false) {
+		//round ongoing
 		Game.draw_hitmarkers();
-		Game.draw_enemy_hitmarkers();
 		Game.draw_hits();
 		Game.draw_enemy_hits();
 		Game.drawarrows();
 		Game.drawhealthbar();
 	}
 	
-	if(Game.game_over && Game.won == false){
+	if(Game.lost){
+		//you lost
 		Game.draw_game_over();
 		if(Game.death_index > 110) {
 			Game.draw_loser_text();
@@ -1321,7 +1327,7 @@ Game.draw = function () {
 };
 
 Game.draw_player = function() {
-	if(Game.game_over && Game.won == false){
+	if(Game.lost){
 		//Game.draw_game_over();
 		return
 	}
@@ -1371,120 +1377,6 @@ Game.draw_player = function() {
 Game.draw_win = function(){
 	var position = {x:0, y:0}
 	if(Game.win_index > 100){
-		/*if(Game.win_index < 120){
-			Game.drawImage(Game.win00, position);
-		}
-		else if(Game.win_index < 140){
-			Game.drawImage(Game.win01, position);
-		}
-		else if(Game.win_index < 160){
-			Game.drawImage(Game.win02, position);
-		}
-		else if(Game.win_index < 175){
-			Game.drawImage(Game.win03, position);
-		}
-		else if(Game.win_index < 190){
-			Game.drawImage(Game.win04, position);
-		}
-		else if(Game.win_index < 215){
-			Game.drawImage(Game.win05, position);
-		}
-		else if(Game.win_index < 260){
-			Game.drawImage(Game.win06, position);
-		}
-		//else if(Game.win_index < 270){
-		//	Game.drawImage(Game.win07, position);
-		//}
-		else if(Game.win_index < 320){
-			Game.drawImage(Game.win1, position);
-		}
-		else if(Game.win_index < 340){
-			Game.drawImage(Game.win2, position);
-		}
-		else if(Game.win_index < 360){
-			Game.drawImage(Game.win3, position);
-		}
-		else if(Game.win_index < 375){
-			Game.drawImage(Game.win4, position);
-		}
-		else if(Game.win_index < 390){
-			Game.drawImage(Game.win5, position);
-		}
-		else if(Game.win_index < 415){
-			Game.drawImage(Game.win6, position);
-		}
-		else if(Game.win_index < 460){
-			Game.drawImage(Game.win7, position);
-		}
-		else if(Game.win_index < 470){
-			Game.drawImage(Game.win8, position);
-		}
-		else if(Game.win_index < 480){
-			Game.drawImage(Game.win9, position);
-		}
-		else{
-			Game.drawImage(Game.win10, position);	
-		}
-
-		if(Game.win_index > 360){
-			if(Game.win_index < 370){
-				Game.drawImage(Game.poof1, position);
-			}
-			else if(Game.win_index < 380){
-				Game.drawImage(Game.poof2, position);
-			}
-			else if(Game.win_index < 390){
-				Game.drawImage(Game.poof3, position);
-			}
-			else if(Game.win_index < 400){
-				Game.drawImage(Game.poof4, position);
-			}
-			else if(Game.win_index < 410){
-				Game.drawImage(Game.poof5, position);
-			}
-			else if(Game.win_index < 420){
-				Game.drawImage(Game.poof6, position);
-			}
-			else if(Game.win_index < 430){
-				Game.drawImage(Game.poof7, position);
-			}
-			else if(Game.win_index < 440){
-				Game.drawImage(Game.poof8, position);
-			}
-			else if(Game.win_index < 460){
-				Game.drawImage(Game.poof9, position);
-			}
-			else if(Game.win_index < 470){
-				Game.drawImage(Game.poof10, position);
-			}
-			else if(Game.win_index < 500){
-				Game.drawImage(Game.poof11, position);
-			}
-		}		
-		if(Game.win_index < 320){
-			Game.drawImage(Game.pin1, position);
-		}
-		else if(Game.win_index < 340){
-			Game.drawImage(Game.pin2, position);
-		}
-		else if(Game.win_index < 360){
-			Game.drawImage(Game.pin3, position);
-		}
-		else if(Game.win_index < 380){
-			Game.drawImage(Game.pin4, position);
-		}
-		else if(Game.win_index < 400){
-			Game.drawImage(Game.pin5, position);
-		}
-		else if(Game.win_index < 420){
-			Game.drawImage(Game.pin6, position);
-		}
-		else if(Game.win_index < 440){
-			Game.drawImage(Game.pin7, position);
-		}
-		else if(Game.win_index < 460){
-			Game.drawImage(Game.pin8, position);
-		}*/
 		Game.drawImage(Game.win10, position)
 		Game.play_animation();
 		if(Game.win_index > 1300) {
@@ -1545,20 +1437,17 @@ Game.draw_game_over = function() {
 	if(Game.death_index > 240) {
 		return
 	}
-	//if (Game.death_index < 200) {
-	//	Game.death_index += 1;
-	//}
 }
 
 Game.draw_enemy = function() {
 	if (Game.get_in_round_time() - Game.enemy_last_input_time < 0.1){
-		Game.drawImage(Game.enemy_sprites[Game.enemy_last_input][0], {x : 380, y : 10})
+		Game.drawImage(Game.enemy_sprites[Game.enemy_last_input][0], {x : 0, y : 0})
 	}
 	else if (Game.get_in_round_time() - Game.enemy_last_input_time < 0.2){
-		Game.drawImage(Game.enemy_sprites[Game.enemy_last_input][1], {x : 380, y : 10})
+		Game.drawImage(Game.enemy_sprites[Game.enemy_last_input][1], {x : 0, y : 0})
 	}
 	else if (Game.get_in_round_time() - Game.enemy_last_input_time < 2){
-		Game.drawImage(Game.enemy_sprites[Game.enemy_last_input][2], {x : 380, y : 10})
+		Game.drawImage(Game.enemy_sprites[Game.enemy_last_input][2], {x : 0, y : 0})
 	}
 	else {
 		Game.draw_idle_enemy();
@@ -1665,9 +1554,6 @@ Game.drawarrows = function() {
 
 Game.draw_hitmarkers = function() {
 	Game.drawImage(Game.hitmarkers, {x : 1400, y : 65})
-}
-
-Game.draw_enemy_hitmarkers = function() {
 	Game.drawImage(Game.hitmarkers, {x : 0, y : 65})
 }
 
@@ -1781,11 +1667,12 @@ Game.draw_inputted_name = function(won){
 }
 
 Game.draw_scoreboard = function(){
-	Game.canvasContext.font = "36px Arial"; // Font size and family
+	Game.canvasContext.font = "36px Times New Roman"; // Font size and family
 	Game.canvasContext.fillStyle = "white";  // Text color
 	var ypos = 200
 	for(var score in Game.highscores){
 		Game.canvasContext.fillText(Game.highscores[score][0] + ", " + Game.highscores[score][1], 780, ypos)
 		ypos += 80
 	}
+	Game.drawImage(Game.scoreboard_button, {x : 1500, y : 500})
 }
