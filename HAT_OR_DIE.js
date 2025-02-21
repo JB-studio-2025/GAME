@@ -427,7 +427,7 @@ Game.load_UI_elements = function() {
 	Game.loser_image = new Image();
 	Game.loser_image.src = "UI/loser_text.png"
 	Game.bakgrund = new Image();
-	Game.bakgrund.src = "UI/bababa.png";
+	Game.bakgrund.src = "UI/babababa.png";
 	Game.bakgrundKO = new Image();
 	Game.bakgrundKO.src = "UI/bakgrund.png";
 	
