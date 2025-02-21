@@ -533,6 +533,10 @@ Game.load_UI_elements = function() {
 	Game.scoreboard_bunny_3.src = "end_animations/bunny3.png"
 	Game.scoreboard_bunny_0 = new Image();
 	Game.scoreboard_bunny_0.src = "end_animations/bunny0.png"
+	Game.scoreboard_bunny_4 = new Image();
+	Game.scoreboard_bunny_4.src = "end_animations/bun2.png"
+	Game.scoreboard_hat = new Image();
+	Game.scoreboard_hat.src = "UI/hat.png"
 }
 
 Game.load_musix = function() {
@@ -1747,26 +1751,34 @@ Game.scoreboard_side_animations = function() {
 		}
 	}
 	else{
+		Game.drawImage(Game.scoreboard_hat, pos);
 		var r = Math.random();
-		if(r < 0.01 && Game.scoreboard_clock == 0){
+		if(r < 0.005 && Game.scoreboard_clock < 0){
 		//ALLA FRAMES SKA BLI LÄNGRE
-			Game.scoreboard_clock = 120
+			Game.scoreboard_clock = 80
 		}
-		if(Game.scoreboard_clock > 110){
-			Game.drawImage(Game.scoreboard_bunny_2, pos);
-		}
-		else if(Game.scoreboard_clock > 80){
-			Game.drawImage(Game.scoreboard_bunny_3, pos);
-		}
-		else if( Game.scoreboard_clock > 70){
+		if(Game.scoreboard_clock > 70){
 			Game.drawImage(Game.scoreboard_bunny_0, pos);
 		}
-		else{
+		else if(Game.scoreboard_clock > 60){
+			Game.drawImage(Game.scoreboard_bunny_2, pos);
+		}
+		else if( Game.scoreboard_clock > 35){
+			Game.drawImage(Game.scoreboard_bunny_3, pos);
+		}
+		else if( Game.scoreboard_clock > 25){
+			Game.drawImage(Game.scoreboard_bunny_0, pos);
+		}
+		else if(Game.scoreboard_clock > -30){
 			Game.drawImage(Game.scoreboard_bunny_1, pos);
 		}
-		if(Game.scoreboard_clock > 0){
-			Game.scoreboard_clock--;
+		else{
+			Game.drawImage(Game.scoreboard_bunny_4, pos);
 		}
+		if(Game.scoreboard_clock == -60){
+			Game.scoreboard_clock = 0;
+		}
+		Game.scoreboard_clock--;
 	}
 }
 
