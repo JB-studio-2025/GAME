@@ -531,6 +531,8 @@ Game.load_UI_elements = function() {
 	Game.scoreboard_bunny_2.src = "end_animations/bunny2.png"
 	Game.scoreboard_bunny_3 = new Image();
 	Game.scoreboard_bunny_3.src = "end_animations/bunny3.png"
+	Game.scoreboard_bunny_0 = new Image();
+	Game.scoreboard_bunny_0.src = "end_animations/bunny0.png"
 }
 
 Game.load_musix = function() {
@@ -1747,9 +1749,13 @@ Game.scoreboard_side_animations = function() {
 	else{
 		var r = Math.random();
 		if(r < 0.01){
-			Game.scoreboard_clock = 10
+		//ALLA FRAMES SKA BLI LÄNGRE
+			Game.scoreboard_clock = 16
 		}
-		if(Game.scoreboard_clock > 5){
+		if(Game.scoreboard_clock > 12){
+			Game.drawImage(Game.scoreboard_bunny_0, pos);
+		}
+		else if(Game.scoreboard_clock > 8){
 			Game.drawImage(Game.scoreboard_bunny_2, pos);
 		}
 		else if( Game.scoreboard_clock > 0){
