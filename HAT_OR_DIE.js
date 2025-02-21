@@ -1748,18 +1748,18 @@ Game.scoreboard_side_animations = function() {
 	}
 	else{
 		var r = Math.random();
-		if(r < 0.01){
+		if(r < 0.01 && Game.scoreboard_clock == 0){
 		//ALLA FRAMES SKA BLI LÄNGRE
-			Game.scoreboard_clock = 16
+			Game.scoreboard_clock = 120
 		}
-		if(Game.scoreboard_clock > 12){
-			Game.drawImage(Game.scoreboard_bunny_0, pos);
-		}
-		else if(Game.scoreboard_clock > 8){
+		if(Game.scoreboard_clock > 110){
 			Game.drawImage(Game.scoreboard_bunny_2, pos);
 		}
-		else if( Game.scoreboard_clock > 0){
+		else if(Game.scoreboard_clock > 80){
 			Game.drawImage(Game.scoreboard_bunny_3, pos);
+		}
+		else if( Game.scoreboard_clock > 70){
+			Game.drawImage(Game.scoreboard_bunny_0, pos);
 		}
 		else{
 			Game.drawImage(Game.scoreboard_bunny_1, pos);
