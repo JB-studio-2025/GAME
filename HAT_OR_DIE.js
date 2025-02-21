@@ -425,7 +425,7 @@ Game.load_UI_elements = function() {
 	Game.hitmarkers = new Image();
 	Game.hitmarkers.src = "Text och nya pilar/Pilar ny.png"
 	Game.loser_image = new Image();
-	Game.loser_image.src = "UI/LOSERHAHAHAHA.png"
+	Game.loser_image.src = "UI/loser_text.png"
 	Game.bakgrund = new Image();
 	Game.bakgrund.src = "UI/bababa.png";
 	Game.bakgrundKO = new Image();
@@ -1222,10 +1222,10 @@ Game.loser_logic = function() {//COPE
 	//if(Game.get_mouse_position([0,1800],[0,900]) && Mouse.leftDown){//COPE
 		//Game.in_menus = true;//COPE
 	//}//COPE
-	if (Game.death_index < 241) {//COPE
+	if (Game.death_index < 200) {//COPE
 		Game.death_index += 1;//COPE
 	}
-	else{//COPE
+	if(Game.death_index > 110){//COPE
 		Game.scoreboard_logic();//COPE
 	}//COPE
 }//COPE
@@ -1467,7 +1467,7 @@ Game.draw_game_over = function() {
 	if(Game.death_index > 110) {
 		Game.drawImage(Game.loser_image, {x : 100, y : 0});
 	}
-	if(Game.death_index > 240) {
+	if(Game.death_index > 110) {
 		Game.draw_scoreboard();
 		return
 	}
@@ -1700,12 +1700,12 @@ Game.draw_inputted_name = function(){
 	}
 	else{
 		//Game.drawImage(Game.scoreboard_congrats, {x:0, y:0});
-		Game.canvasContext.fillText(String(Game.score),900,330)
+		Game.canvasContext.fillText(String(Game.score),750,860)
 		if(Game.name.length > 9){
 			Game.drawImage(Game.fattie, {x:0, y:0});
 			Game.canvasContext.fillStyle = "#f6985e";
 		}
-		Game.canvasContext.fillText(Game.name, 900, 600)
+		Game.canvasContext.fillText(Game.name, 700, 790)
 	}
 }
 
@@ -1723,6 +1723,7 @@ Game.draw_scoreboard = function(){
 		
 		Game.scoreboard_draw_the_names();
 		Game.scoreboard_buttons();
+		Game.scoreboard_side_animations();
 		//Game.drawImage(Game.scoreboard_button, {x : 1500, y : 500})
 	}
 }
@@ -1745,14 +1746,17 @@ Game.scoreboard_side_animations = function() {
 	}
 	else{
 		var r = Math.random();
-		if(r < 0.05){
-			Game.scoreboard_clock = 20
+		if(r < 0.01){
+			Game.scoreboard_clock = 10
 		}
-		if(Game.scoreboard_clock > 10){
-			Game.drawImage(Game.scoreboard_bunny_1, pos);
+		if(Game.scoreboard_clock > 5){
+			Game.drawImage(Game.scoreboard_bunny_2, pos);
 		}
 		else if( Game.scoreboard_clock > 0){
-			Game.drawImage(Game.scoreboard_bunny_2, pos);
+			Game.drawImage(Game.scoreboard_bunny_3, pos);
+		}
+		else{
+			Game.drawImage(Game.scoreboard_bunny_1, pos);
 		}
 		if(Game.scoreboard_clock > 0){
 			Game.scoreboard_clock--;
@@ -1782,6 +1786,7 @@ Game.scoreboard_draw_the_names = function() {
 }
 
 Game.scoreboard_buttons = function() {
+	const pos = {x : 0, y : 0}
 	if(Game.scoreboard_page != 0){
 		Game.drawImage(Game.scoreboard_page_left, pos);
 		if(Game.get_mouse_position([527,577],[790,840])){
