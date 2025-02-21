@@ -96,6 +96,7 @@ var Game = {
 	name : "",
 	score : 0,
 	scoreboard_page : 0,
+	scoreboard_clock : 0,
 	name_inputted : false,
 	in_menus : true,
 	restart_counter : 0,
@@ -361,7 +362,7 @@ Game.load_WIN_animation = function() {
 	Game.video.width = 1800;
 	Game.video.height = 900;
 	//const videoSource = document.createElement('source');
-	Game.video.src = 'DIE/fiiinish_a_long_1.mp4';
+	Game.video.src = 'end_animations/fiiinish_a_long_2.mp4';
 	Game.video.type = 'video/mp4';
 	//Game.video.appendChild(videoSource);
 	Game.video.autoplay = true;
@@ -524,6 +525,12 @@ Game.load_UI_elements = function() {
 	Game.scoreboard_page_right.src = "end_animations/arrow_right.png"
 	Game.scoreboard_page_right_glow = new Image();
 	Game.scoreboard_page_right_glow.src = "end_animations/blur_right.png"
+	Game.scoreboard_bunny_1 = new Image();
+	Game.scoreboard_bunny_1.src = "end_animations/bunny1.png"
+	Game.scoreboard_bunny_2 = new Image();
+	Game.scoreboard_bunny_2.src = "end_animations/bunny2.png"
+	Game.scoreboard_bunny_3 = new Image();
+	Game.scoreboard_bunny_3.src = "end_animations/bunny3.png"
 }
 
 Game.load_musix = function() {
@@ -1173,6 +1180,7 @@ Game.restart = function() {
 	Game.score = 0;
 	Game.won = false;
 	Game.lost = false;
+	Game.scoreboard_clock = 0;
 	Game.start_menu_counter = -120;
 	Game.restart_counter = 0;
 	Game.win_index = 0;
@@ -1214,9 +1222,11 @@ Game.loser_logic = function() {//COPE
 	//if(Game.get_mouse_position([0,1800],[0,900]) && Mouse.leftDown){//COPE
 		//Game.in_menus = true;//COPE
 	//}//COPE
-	Game.scoreboard_logic();
-	if (Game.death_index < 500) {//COPE
+	if (Game.death_index < 241) {//COPE
 		Game.death_index += 1;//COPE
+	}
+	else{//COPE
+		Game.scoreboard_logic();//COPE
 	}//COPE
 }//COPE
 
@@ -1327,10 +1337,6 @@ Game.draw_background = function() {
 		return;
 	}
 	Game.drawImage(Game.bakgrund, {x : 0, y : 0});
-}
-
-Game.draw_loser_text = function() {
-	Game.drawImage(Game.loser_image, {x : 100, y : 0});
 }
 
 Game.draw = function () {
@@ -1459,7 +1465,7 @@ Game.draw_game_over = function() {
 		Game.drawImage(Game.death_animation[13], position);
 	}
 	if(Game.death_index > 110) {
-		Game.draw_loser_text();
+		Game.drawImage(Game.loser_image, {x : 100, y : 0});
 	}
 	if(Game.death_index > 240) {
 		Game.draw_scoreboard();
@@ -1711,54 +1717,95 @@ Game.draw_scoreboard = function(){
 	else{
 		Game.drawImage(Game.scoreboard_background, pos);
 		Game.drawImage(Game.scoreboard_text, pos);
-		Game.drawImage(Game.scoreboard_IDA_1, pos);
 		Game.canvasContext.font = "40px Times New Roman";
 		Game.canvasContext.fillStyle = "white";
 		Game.canvasContext.textAlign = "left";
-		var ypos = 200;
-		for(let score = 0; score < 10; score++){
-			if(score + 20 * Game.scoreboard_page >= Game.highscores.length){
-				break
-			}
-			Game.canvasContext.fillText(Game.highscores[score + 20 * Game.scoreboard_page][0], 200, ypos)
-			Game.canvasContext.fillText(Game.highscores[score + 20 * Game.scoreboard_page][1], 500, ypos)
-			ypos += 60
-		}
-		ypos = 200;
-		for(let score = 10; score < 20; score++){
-			if(score + 20 * Game.scoreboard_page >= Game.highscores.length){
-				break
-			}
-			Game.canvasContext.fillText(Game.highscores[score + 20 * Game.scoreboard_page][0], 700, ypos)
-			Game.canvasContext.fillText(Game.highscores[score + 20 * Game.scoreboard_page][1], 1000, ypos)
-			ypos += 60
-		}
-		if(Game.highscores.length > 20) {
-			Game.drawImage(Game.scoreboard_page_pic, pos);
-		}
-		if(Game.scoreboard_page != 0){
-			Game.drawImage(Game.scoreboard_page_left, pos);
-			if(Game.get_mouse_position([0,900],[0,800])){
-				Game.drawImage(Game.scoreboard_page_left_glow, pos);
-				if(Mouse.leftDown && Mouse.held == false){
-					Game.scoreboard_page--;
-					Mouse.held = true;
-				}
-			}
-		}
-		if((Game.scoreboard_page + 1) * 20 < Game.highscores.length){
-			Game.drawImage(Game.scoreboard_page_right, pos);
-			if(Game.get_mouse_position([900,1800],[0,800])){
-				Game.drawImage(Game.scoreboard_page_right_glow, pos);
-				if(Mouse.leftDown && Mouse.held == false){
-					Game.scoreboard_page++;
-					Mouse.held = true;
-				}
-			}
-		}
-		if(Mouse.leftDown == false){
-			Mouse.held = false;
-		}
+		
+		Game.scoreboard_draw_the_names();
+		Game.scoreboard_buttons();
 		//Game.drawImage(Game.scoreboard_button, {x : 1500, y : 500})
+	}
+}
+
+Game.scoreboard_side_animations = function() {
+	const pos = {x : 0, y : 0}
+	if(Game.won){
+		if(Game.scoreboard_clock < 60){
+			Game.drawImage(Game.scoreboard_IDA_1, pos);
+		}
+		else{
+			Game.drawImage(Game.scoreboard_IDA_2, pos);
+		}
+		if(Game.scoreboard_clock == 120){
+			Game.scoreboard_clock = 0;
+		}
+		else{
+			Game.scoreboard_clock++;
+		}
+	}
+	else{
+		var r = Math.random();
+		if(r < 0.05){
+			Game.scoreboard_clock = 20
+		}
+		if(Game.scoreboard_clock > 10){
+			Game.drawImage(Game.scoreboard_bunny_1, pos);
+		}
+		else if( Game.scoreboard_clock > 0){
+			Game.drawImage(Game.scoreboard_bunny_2, pos);
+		}
+		if(Game.scoreboard_clock > 0){
+			Game.scoreboard_clock--;
+		}
+	}
+}
+
+Game.scoreboard_draw_the_names = function() {
+	var ypos = 200;
+	for(let score = 0; score < 10; score++){
+		if(score + 20 * Game.scoreboard_page >= Game.highscores.length){
+			break
+		}
+		Game.canvasContext.fillText(Game.highscores[score + 20 * Game.scoreboard_page][0], 200, ypos)
+		Game.canvasContext.fillText(Game.highscores[score + 20 * Game.scoreboard_page][1], 500, ypos)
+		ypos += 60
+	}
+	ypos = 200;
+	for(let score = 10; score < 20; score++){
+		if(score + 20 * Game.scoreboard_page >= Game.highscores.length){
+			break
+		}
+		Game.canvasContext.fillText(Game.highscores[score + 20 * Game.scoreboard_page][0], 700, ypos)
+		Game.canvasContext.fillText(Game.highscores[score + 20 * Game.scoreboard_page][1], 1000, ypos)
+		ypos += 60
+	}	
+}
+
+Game.scoreboard_buttons = function() {
+	if(Game.scoreboard_page != 0){
+		Game.drawImage(Game.scoreboard_page_left, pos);
+		if(Game.get_mouse_position([527,577],[790,840])){
+			Game.drawImage(Game.scoreboard_page_left_glow, pos);
+			if(Mouse.leftDown && Mouse.held == false){
+				Game.scoreboard_page--;
+				Mouse.held = true;
+			}
+		}
+	}
+	if((Game.scoreboard_page + 1) * 20 < Game.highscores.length){
+		Game.drawImage(Game.scoreboard_page_right, pos);
+		if(Game.get_mouse_position([750,800],[790,840])){
+			Game.drawImage(Game.scoreboard_page_right_glow, pos);
+			if(Mouse.leftDown && Mouse.held == false){
+				Game.scoreboard_page++;
+				Mouse.held = true;
+			}
+		}
+	}
+	if(Game.highscores.length > 20) {
+		Game.drawImage(Game.scoreboard_page_pic, pos);
+	}
+	if(Mouse.leftDown == false){
+		Mouse.held = false;
 	}
 }
