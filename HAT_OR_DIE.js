@@ -644,7 +644,7 @@ Game.start_screen = function() {
 			Game.score = 7000
 			Game.start_time = 0;
 			Game.level_musix.play();
-			Game.level_musix.currentTime = 80;
+			Game.level_musix.currentTime = 0;
 			Game.in_menus = false;
 			window.setTimeout(Game.mainLoop(),0);
 			return
