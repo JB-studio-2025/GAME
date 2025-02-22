@@ -103,7 +103,10 @@ var Game = {
 	consequtive_hits : 0,
 	hit_index : [0,0,0,0],
 	miss_index : [0,0,0,0],
-	enemy_hit_index : [0,0,0,0]
+	enemy_hit_index : [0,0,0,0],
+	recording_mode : false,
+	recorded_sequence : [],
+	P_held : false
 };
 
 Game.Compensate_for_bigger_screen = function() {
@@ -139,10 +142,10 @@ Game.start = async function () {
 
 Game.compensator = function() {
 	for(let index = 0; index < Game.arrow_sequence.length; ++index) {
-		Game.arrow_sequence[index][0] -= 1050 / (Game.arrow_speed * 60);
+		Game.arrow_sequence[index][0] -= 800 / (Game.arrow_speed * 60);
 	}
 	for(let index = 0; index < Game.enemy_arrow_sequence.length; ++index) {
-		Game.enemy_arrow_sequence[index][0] -= 1050 / (Game.arrow_speed * 60);
+		Game.enemy_arrow_sequence[index][0] -= 800 / (Game.arrow_speed * 60);
 	}	
 	//Game.arrow_sequence = Game.arrow_sequence.pop();
 	//console.log('compensated data: ', Game.arrow_sequence);
@@ -541,7 +544,7 @@ Game.load_UI_elements = function() {
 
 Game.load_musix = function() {
 	Game.level_musix = new Audio();
-    Game.level_musix.src = "musik/poppies.mp4";
+    Game.level_musix.src = "musik/not_fnf.mp4";
     Game.level_musix.volume = 0.1;
 	/*
 	Game.death_schreech = new Audio();
@@ -553,7 +556,7 @@ Game.load_musix = function() {
 Game.loadGameData = async function() {
   try {
 	const timestamp = new Date().getTime(); // Unique timestamp
-    const response = await fetch('./level1.json');
+    const response = await fetch('Arrow_sequences/player_level_1.json');
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
@@ -604,7 +607,13 @@ Game.loadGameData = async function() {
 document.addEventListener( 'DOMContentLoaded', Game.start);
 
 Game.get_in_round_time = function() {
-	return Game.level_musix.currentTime
+	if (Game.level_musix.paused){
+		Game.start_time += 1/60;
+		return Game.start_time;
+	}
+	else{
+		return Game.level_musix.currentTime;
+	}
 }
 
 Game.start_screen = function() {
@@ -616,9 +625,8 @@ Game.start_screen = function() {
 		}
 		Game.start_menu_position = true;
 		if( Mouse.leftDown == true){
-			var d = new Date();
 			Game.health_punishment = 1;
-			Game.start_time = d.getTime();
+			Game.start_time = -10;
 			Game.in_menus = false;
 			window.setTimeout(Game.mainLoop(),0);
 			return
@@ -631,11 +639,12 @@ Game.start_screen = function() {
 			}
 		}
 		Game.start_menu_position = false;
-		if( Mouse.leftDown == true){
+		if( Mouse.leftDown == true ){
 			Game.health_punishment = 0;
 			Game.score = 7000
-			var d = new Date();
-			Game.start_time = d.getTime() - 155*1000;
+			Game.start_time = 0;
+			Game.level_musix.play();
+			Game.level_musix.currentTime = 80;
 			Game.in_menus = false;
 			window.setTimeout(Game.mainLoop(),0);
 			return
@@ -767,7 +776,6 @@ Game.draw_bunny = function() {
 //Logic
 
 Game.remove_missed_arrows = function() {
-	
 	if (Game.active_arrows_W.length != 0 && Game.active_arrows_W[Game.active_arrows_W.length - 1][0] <= 0){
 		Game.active_arrows_W.pop()
 		Game.decrease_health()
@@ -824,7 +832,9 @@ Game.decrease_health = function() {
 }
 
 Game.update_arrows = function() {
-	Game.remove_missed_arrows()
+	if(Game.recording_mode == false){
+		Game.remove_missed_arrows()
+	}
 	for (let index = 0; index < Game.active_arrows_W.length; ++index) {
 		Game.active_arrows_W[index][0] -= Game.arrow_speed
 	}
@@ -1173,9 +1183,6 @@ Game.retry = function() {
 }
 
 Game.restart = function() {
-	//var d = new Date();
-	//Game.start_time = d.getTime();
-	//Game.level_musix.play();
 	Game.player_health = 12;
 	Game.game_over = false;
 	Game.looking_good = true;
@@ -1206,13 +1213,18 @@ Game.update = function () {
 		Game.winner_logic();
 	}
 	else{
-		Game.check_user_input();
+		if(Game.recording_mode == true){
+			Game.check_user_input_for_recording();
+		}
+		else{
+			Game.check_user_input();
+		}
 		Game.update_enemy_movement();
 		Game.update_arrows();
 		Game.create_arrow();
 		Game.check_for_losers();
 		Game.check_for_winners();
-		if (Game.level_musix.paused) {
+		if (Game.level_musix.paused && Game.get_in_round_time() > 0) {
 			Game.level_musix.play();
 		}
 	}
@@ -1270,9 +1282,8 @@ Game.check_for_losers = function() {
 }
 
 Game.create_enemy_arrow = function() {
-	var d = new Date();
 	if (Game.enemy_arrow_sequence.length > 1){
-		while ((d.getTime() - Game.start_time) / 1000 > Game.enemy_arrow_sequence[Game.enemy_arrow_sequence.length - 1][0]) {
+		while (Game.get_in_round_time() > Game.enemy_arrow_sequence[Game.enemy_arrow_sequence.length - 1][0]) {
 			if (Game.enemy_arrow_sequence[Game.enemy_arrow_sequence.length - 1][1] == 0) {
 				Game.enemy_active_arrows_A = [[900, Game.enemy_arrow_sequence[Game.enemy_arrow_sequence.length - 1][2]]].concat(Game.enemy_active_arrows_A)
 			}
@@ -1292,13 +1303,12 @@ Game.create_enemy_arrow = function() {
 }	
 
 Game.create_arrow = function() {
-	var d = new Date();
 	if (Game.arrow_sequence.length > 1){
-		while ((d.getTime() - Game.start_time) / 1000 > Game.arrow_sequence[Game.arrow_sequence.length - 1][0]) {
+		while (Game.get_in_round_time() > Game.arrow_sequence[Game.arrow_sequence.length - 1][0]) {
 			if (Game.arrow_sequence[Game.arrow_sequence.length - 1][1] == 0) {
 				Game.active_arrows_A = [[900, Game.arrow_sequence[Game.arrow_sequence.length - 1][2]]].concat(Game.active_arrows_A)
 			}
-			else if (Game.arrow_sequence[Game.arrow_sequence.length - 1][1] == 1) {
+			else if (Game.arrow_sequence [Game.arrow_sequence.length - 1][1] == 1) {
 				Game.active_arrows_D = [[900, Game.arrow_sequence[Game.arrow_sequence.length - 1][2]]].concat(Game.active_arrows_D)
 			}
 			else if (Game.arrow_sequence[Game.arrow_sequence.length - 1][1] == 2) {
@@ -1735,13 +1745,13 @@ Game.draw_scoreboard = function(){
 }
 
 Game.scoreboard_side_animations = function() {
-	const pos = {x : 0, y : 0}
+	const pos1 = {x : 0, y : 0}
 	if(Game.won){
 		if(Game.scoreboard_clock < 60){
-			Game.drawImage(Game.scoreboard_IDA_1, pos);
+			Game.drawImage(Game.scoreboard_IDA_1, pos1);
 		}
 		else{
-			Game.drawImage(Game.scoreboard_IDA_2, pos);
+			Game.drawImage(Game.scoreboard_IDA_2, pos1);
 		}
 		if(Game.scoreboard_clock == 120){
 			Game.scoreboard_clock = 0;
@@ -1751,29 +1761,34 @@ Game.scoreboard_side_animations = function() {
 		}
 	}
 	else{
-		Game.drawImage(Game.scoreboard_hat, pos);
+		Game.drawImage(Game.scoreboard_hat, pos1);
+		if(pos1.x != 0){
+				console.log(pos1)
+			}
 		var r = Math.random();
 		if(r < 0.005 && Game.scoreboard_clock < 0){
-		//ALLA FRAMES SKA BLI LÄNGRE
 			Game.scoreboard_clock = 80
 		}
 		if(Game.scoreboard_clock > 70){
-			Game.drawImage(Game.scoreboard_bunny_0, pos);
+			Game.drawImage(Game.scoreboard_bunny_0, pos1);
 		}
 		else if(Game.scoreboard_clock > 60){
-			Game.drawImage(Game.scoreboard_bunny_2, pos);
+			Game.drawImage(Game.scoreboard_bunny_2, pos1);
 		}
 		else if( Game.scoreboard_clock > 35){
-			Game.drawImage(Game.scoreboard_bunny_3, pos);
+			Game.drawImage(Game.scoreboard_bunny_3, pos1);
 		}
 		else if( Game.scoreboard_clock > 25){
-			Game.drawImage(Game.scoreboard_bunny_0, pos);
+			Game.drawImage(Game.scoreboard_bunny_0, pos1);
 		}
 		else if(Game.scoreboard_clock > -30){
-			Game.drawImage(Game.scoreboard_bunny_1, pos);
+			Game.drawImage(Game.scoreboard_bunny_1, pos1);
 		}
 		else{
-			Game.drawImage(Game.scoreboard_bunny_4, pos);
+			Game.drawImage(Game.scoreboard_bunny_4, pos1);
+			if(pos1.x != 0){
+				console.log(pos1)
+			}
 		}
 		if(Game.scoreboard_clock == -60){
 			Game.scoreboard_clock = 0;
@@ -1831,4 +1846,227 @@ Game.scoreboard_buttons = function() {
 	if(Mouse.leftDown == false){
 		Mouse.held = false;
 	}
+}
+
+Game.check_user_input_for_recording = function() {
+	if(Game.won){
+		return;
+	}
+	var hit_animation_duration = 3;
+	//Active arrows has form [[height, duration],[height, duration]]
+	const arrow_hit_height = 123;
+	const arrow_hit_height2 = 132;
+	if (Keyboard.keyDown[Keys.W]){
+		if(Game.W_held == false){	
+			Game.last_correct_pressed_key = 2
+			Game.add_to_recorded_array(Game.last_correct_pressed_key);
+			Game.time_of_last_input = Game.get_in_round_time()
+			if (Game.active_arrows_W.length != 0 && Game.active_arrows_W[Game.active_arrows_W.length - 1][0] < 180 && Game.active_arrows_W[Game.active_arrows_W.length - 1][0] > 50){
+				if(Game.active_arrows_W[Game.active_arrows_W.length - 1][1] > 0){
+					Game.active_arrows_W[Game.active_arrows_W.length - 1][0] = arrow_hit_height;
+					Game.active_arrows_W[Game.active_arrows_W.length - 1][1] -= 1 / 60;
+					//console.log(Game.active_arrows_W[Game.active_arrows_W.length - 1])
+				}
+				else {
+					Game.active_arrows_W.pop()
+					//Game.increase_health()
+					Game.hit_index[0] = hit_animation_duration;
+				}					
+				//Game.cringe_alert = false;
+			}
+			else{
+				//Game.cringe_alert = true;
+				//Game.decrease_health()
+				Game.miss_index[0] = hit_animation_duration;
+			}
+			Game.W_held = true
+		}
+		else {
+			//Code for holding long arrows
+			if (Game.active_arrows_W.length != 0 && Game.active_arrows_W[Game.active_arrows_W.length - 1][0] < 180 && Game.active_arrows_W[Game.active_arrows_W.length - 1][0] > 50){
+				if(Game.active_arrows_W[Game.active_arrows_W.length - 1][1] > 0){
+					Game.hit_index[0] = hit_animation_duration;
+					Game.active_arrows_W[Game.active_arrows_W.length - 1][0] = arrow_hit_height;
+					Game.active_arrows_W[Game.active_arrows_W.length - 1][1] -= 1 / 60;
+					if(Game.active_arrows_W[Game.active_arrows_W.length - 1][1] == 0){
+						Game.active_arrows_W[Game.active_arrows_W.length - 1][1] = -1;
+					}
+				}
+				else if (Game.active_arrows_W[Game.active_arrows_W.length - 1][1] < 0){
+					Game.active_arrows_W.pop()
+					//Game.increase_health()
+					Game.hit_index[0] = hit_animation_duration;
+				}
+			}
+		}
+	}
+	else{
+	Game.W_held = false
+	}
+	if (Keyboard.keyDown[Keys.D]){
+		if(Game.D_held == false){	
+			Game.last_correct_pressed_key = 1
+			Game.add_to_recorded_array(Game.last_correct_pressed_key);
+			Game.time_of_last_input = Game.get_in_round_time()
+			if (Game.active_arrows_D.length != 0 && Game.active_arrows_D[Game.active_arrows_D.length - 1][0] < 190 && Game.active_arrows_D[Game.active_arrows_D.length - 1][0] > 60){
+				if(Game.active_arrows_D[Game.active_arrows_D.length - 1][1] > 0){
+					Game.active_arrows_D[Game.active_arrows_D.length - 1][0] = arrow_hit_height2;
+					Game.active_arrows_D[Game.active_arrows_D.length - 1][1] -= 1 / 60;
+				}
+				else {
+					Game.active_arrows_D.pop()
+					//Game.increase_health()
+					Game.hit_index[1] = hit_animation_duration;
+				}					
+				//Game.cringe_alert = false;
+			}
+			else{
+				//Game.cringe_alert = true;
+				//Game.decrease_health()
+				Game.miss_index[1] = hit_animation_duration;
+			}
+			Game.D_held = true
+		}
+		else {
+			//Code for holding long arrows
+			if (Game.active_arrows_D.length != 0 && Game.active_arrows_D[Game.active_arrows_D.length - 1][0] < 180 && Game.active_arrows_D[Game.active_arrows_D.length - 1][0] > 50){
+				if(Game.active_arrows_D[Game.active_arrows_D.length - 1][1] > 0){
+					Game.hit_index[1] = hit_animation_duration;
+					Game.active_arrows_D[Game.active_arrows_D.length - 1][0] = arrow_hit_height2;
+					Game.active_arrows_D[Game.active_arrows_D.length - 1][1] -= 1 / 60;
+					if(Game.active_arrows_D[Game.active_arrows_D.length - 1][1] == 0){
+						Game.active_arrows_D[Game.active_arrows_D.length - 1][1] = -1;
+					}
+				}
+				else if (Game.active_arrows_D[Game.active_arrows_D.length - 1][1] < 0){
+					Game.active_arrows_D.pop()
+					//Game.increase_health()
+					Game.hit_index[1] = hit_animation_duration;
+				}
+			}
+		}
+	}
+	else{
+	Game.D_held = false
+	}
+	if (Keyboard.keyDown[Keys.S]){
+		if(Game.S_held == false){
+			Game.last_correct_pressed_key = 3
+			Game.add_to_recorded_array(Game.last_correct_pressed_key);
+			Game.time_of_last_input = Game.get_in_round_time()
+			if (Game.active_arrows_S.length != 0 && Game.active_arrows_S[Game.active_arrows_S.length - 1][0] < 180 && Game.active_arrows_S[Game.active_arrows_S.length - 1][0] > 50){
+				if(Game.active_arrows_S[Game.active_arrows_S.length - 1][1] > 0){
+					Game.active_arrows_S[Game.active_arrows_S.length - 1][0] = arrow_hit_height;
+					Game.active_arrows_S[Game.active_arrows_S.length - 1][1] -= 1 / 60;
+				}
+				else {
+					Game.active_arrows_S.pop()
+					//Game.increase_health()
+					Game.hit_index[2] = hit_animation_duration;
+				}					
+				//Game.cringe_alert = false;
+			}
+			else{
+				//Game.cringe_alert = true;
+				//Game.decrease_health();
+				Game.miss_index[2] = hit_animation_duration;
+			}
+			Game.S_held = true
+		}
+		else {
+			//Code for holding long arrows
+			if (Game.active_arrows_S.length != 0 && Game.active_arrows_S[Game.active_arrows_S.length - 1][0] < 180 && Game.active_arrows_S[Game.active_arrows_S.length - 1][0] > 50){
+				if(Game.active_arrows_S[Game.active_arrows_S.length - 1][1] > 0){
+					Game.hit_index[2] = hit_animation_duration;
+					Game.active_arrows_S[Game.active_arrows_S.length - 1][0] = arrow_hit_height;
+					Game.active_arrows_S[Game.active_arrows_S.length - 1][1] -= 1 / 60;
+					if(Game.active_arrows_S[Game.active_arrows_S.length - 1][1] == 0){
+						Game.active_arrows_S[Game.active_arrows_S.length - 1][1] = -1;
+					}
+				}
+				else if (Game.active_arrows_S[Game.active_arrows_S.length - 1][1] < 0){
+					Game.active_arrows_S.pop();
+					//Game.increase_health();
+					Game.hit_index[2] = hit_animation_duration;
+				}
+			}
+		}
+	}
+	else{
+	Game.S_held = false
+	}
+	if (Keyboard.keyDown[Keys.A]){
+		if(Game.A_held == false){
+			Game.last_correct_pressed_key = 0
+			Game.add_to_recorded_array(Game.last_correct_pressed_key);
+			Game.time_of_last_input = Game.get_in_round_time()
+			if (Game.active_arrows_A.length != 0 && Game.active_arrows_A[Game.active_arrows_A.length - 1][0] < 190 && Game.active_arrows_A[Game.active_arrows_A.length - 1][0] > 60){
+				if(Game.active_arrows_A[Game.active_arrows_A.length - 1][1] > 0){
+					Game.active_arrows_A[Game.active_arrows_A.length - 1][0] = arrow_hit_height2;
+					Game.active_arrows_A[Game.active_arrows_A.length - 1][1] -= 1 / 60;
+					//console.log(Game.active_arrows_A[Game.active_arrows_A.length - 1])
+				}
+				else {
+					Game.active_arrows_A.pop()
+					//Game.increase_health()
+					Game.hit_index[3] = hit_animation_duration;
+				}					
+				//Game.cringe_alert = false;
+			}
+			else{
+				//Game.cringe_alert = true;
+				//Game.decrease_health();
+				Game.miss_index[3] = hit_animation_duration;
+			}
+			Game.A_held = true;
+		}		
+		else {
+			//Code for holding long arrows
+			if (Game.active_arrows_A.length != 0 && Game.active_arrows_A[Game.active_arrows_A.length - 1][0] < 180 && Game.active_arrows_A[Game.active_arrows_A.length - 1][0] > 50){
+				if(Game.active_arrows_A[Game.active_arrows_A.length - 1][1] > 0){
+					Game.hit_index[3] = hit_animation_duration;
+					Game.active_arrows_A[Game.active_arrows_A.length - 1][0] = arrow_hit_height2;
+					Game.active_arrows_A[Game.active_arrows_A.length - 1][1] -= 1 / 60;
+					if(Game.active_arrows_A[Game.active_arrows_A.length - 1][1] == 0){
+						Game.active_arrows_A[Game.active_arrows_A.length - 1][1] = -1;
+					}
+				}
+				else if (Game.active_arrows_A[Game.active_arrows_A.length - 1][1] < 0){
+					Game.active_arrows_A.pop()
+					//Game.increase_health()
+					Game.hit_index[3] = hit_animation_duration;
+				}
+			}
+		}
+	}
+	else{
+	Game.A_held = false	
+	}
+	if (Keyboard.keyDown[Keys.P]){
+		if(Game.P_held == false){
+			Game.savefile();
+			Game.P_held = true;
+		}		
+	}
+}
+
+Game.savefile = function() {
+	// Convert the game data to JSON format
+	const jsonString = JSON.stringify(Game.recorded_sequence, null, 2);
+
+	// Create a Blob
+	const blob = new Blob([jsonString], { type: 'application/json' });
+
+	// Create a download link
+	const link = document.createElement('a');
+	link.href = URL.createObjectURL(blob);
+	link.download = 'sequence_to_' + Game.get_in_round_time().toString() + '.json'; // File name
+	link.click();
+
+	// Clean up
+	URL.revokeObjectURL(link.href);
+}
+
+Game.add_to_recorded_array = function(button) {
+	Game.recorded_sequence = [[Game.get_in_round_time(), button, 0]].concat(Game.recorded_sequence);
 }
