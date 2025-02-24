@@ -392,11 +392,11 @@ Game.load_astrid = function() {
 	Game.edown3.src = "Astrid/Down-2.png";
 	
 	Game.eright1 = new Image();
-	Game.eright1.src = "Astrid/Right_-1.png";
+	Game.eright1.src = "Astrid/POAEA1r.png";
 	Game.eright2 = new Image();
-	Game.eright2.src = "Astrid/Right_-2.png";
+	Game.eright2.src = "Astrid/POAEA2r.png";
 	Game.eright3 = new Image();
-	Game.eright3.src = "Astrid/Right_-2.png";
+	Game.eright3.src = "Astrid/POAEA3r.png";
 	
 	Game.eleft1 = new Image();
 	Game.eleft1.src = "Astrid/Left-1.png";
@@ -416,7 +416,7 @@ Game.load_astrid = function() {
 	//Game.ei5 = new Image();
 	//Game.ei5.src = "./astrid/Idle-5.png";
 	Game.astrid_selection_pic = new Image();
-	Game.astrid_selection_pic.src = "character_selection/astridslct.png"
+	Game.astrid_selection_pic.src = "character_selection/astrid.png"
 	
 	Game.enemy_sprites = [[Game.eleft1, Game.eleft2, Game.eleft3],[Game.eright1, Game.eright2, Game.eright3],[Game.eup1, Game.eup2, Game.eup3],[Game.edown1, Game.edown2, Game.edown3],[Game.ei1, Game.ei2, Game.ei3, Game.ei4]]
 }
@@ -1162,28 +1162,101 @@ Game.update_enemy_movement = function() {
 	const hit_animation_duration = 3;
 	//Remove arrows when their time has come
 	if (Game.enemy_active_arrows_W.length != 0 && Game.enemy_active_arrows_W[Game.enemy_active_arrows_W.length - 1][0] < arrow_hit_height){
-		Game.enemy_last_input_time = Game.get_in_round_time();
-		Game.enemy_last_input = 2;
-		Game.enemy_active_arrows_W.pop();
-		Game.enemy_hit_index[0] = hit_animation_duration
+		if( Game.enemy_last_input != 2){
+			Game.enemy_last_input_time = Game.get_in_round_time();
+			Game.enemy_last_input = 2;
+		}
+		if(Game.enemy_active_arrows_W[Game.enemy_active_arrows_W.length - 1][1] > 0){
+			if ( Game.get_in_round_time() - Game.enemy_last_input_time > 0.3){
+				 Game.enemy_last_input_time = Game.get_in_round_time()
+			}
+			Game.enemy_active_arrows_W[Game.enemy_active_arrows_W.length - 1][0] = arrow_hit_height;
+			Game.enemy_active_arrows_W[Game.enemy_active_arrows_W.length - 1][1] -= 1 / 60;
+		}
+		else{
+			Game.enemy_last_input = 2;
+			Game.enemy_active_arrows_W.pop();
+			Game.enemy_hit_index[0] = hit_animation_duration
+		}
+		
+		//if(Game.enemy_active_arrows_W[Game.enemy_active_arrows_W.length - 1][1] > 0){
+	//		Game.enemy_active_arrows_W[Game.enemy_active_arrows_W.length - 1][0] = arrow_hit_height;
+		//	Game.enemy_active_arrows_W[Game.enemy_active_arrows_W.length - 1][1] -= 1 / 60;w
+			//if( Game.get_in_round_time() - Game.enemy_last_input_time > 0.3 ) {
+				//Game.enemy_last_input_time = Game.get_in_round_time();
+			//}
+		//}
+		
+		//Game.enemy_last_input_time = Game.get_in_round_time();
+		//Game.enemy_last_input = 2;
+		//Game.enemy_active_arrows_W.pop();
+		//Game.enemy_hit_index[0] = hit_animation_duration
 	}
 	if (Game.enemy_active_arrows_S.length != 0 && Game.enemy_active_arrows_S[Game.enemy_active_arrows_S.length - 1][0] < arrow_hit_height){
-		Game.enemy_last_input_time = Game.get_in_round_time();
-		Game.enemy_last_input = 3;
-		Game.enemy_active_arrows_S.pop();
-		Game.enemy_hit_index[2] = hit_animation_duration
+		if( Game.enemy_last_input != 3){
+			Game.enemy_last_input_time = Game.get_in_round_time();
+			Game.enemy_last_input = 3;
+		}
+		if(Game.enemy_active_arrows_S[Game.enemy_active_arrows_S.length - 1][1] > 0){
+			if ( Game.get_in_round_time() - Game.enemy_last_input_time > 0.3){
+				Game.enemy_last_input_time = Game.get_in_round_time()
+			}
+			Game.enemy_active_arrows_S[Game.enemy_active_arrows_S.length - 1][0] = arrow_hit_height;
+			Game.enemy_active_arrows_S[Game.enemy_active_arrows_S.length - 1][1] -= 1 / 60;
+		}
+		else{
+			Game.enemy_last_input = 3;
+			Game.enemy_active_arrows_S.pop();
+			Game.enemy_hit_index[2] = hit_animation_duration
+		}
+		//Game.enemy_last_input_time = Game.get_in_round_time();
+		//Game.enemy_last_input = 3;
+		//Game.enemy_active_arrows_S.pop();
+		//Game.enemy_hit_index[2] = hit_animation_duration
 	}
 	if (Game.enemy_active_arrows_D.length != 0 && Game.enemy_active_arrows_D[Game.enemy_active_arrows_D.length - 1][0] < arrow_hit_height2){
-		Game.enemy_last_input_time = Game.get_in_round_time();
-		Game.enemy_last_input = 1;
-		Game.enemy_active_arrows_D.pop();
-		Game.enemy_hit_index[1] = hit_animation_duration
+		if( Game.enemy_last_input != 1){
+			Game.enemy_last_input_time = Game.get_in_round_time();
+			Game.enemy_last_input = 1;
+		}
+		if(Game.enemy_active_arrows_D[Game.enemy_active_arrows_D.length - 1][1] > 0){
+			if ( Game.get_in_round_time() - Game.enemy_last_input_time > 0.3){
+				 Game.enemy_last_input_time = Game.get_in_round_time()
+			}
+			Game.enemy_active_arrows_D[Game.enemy_active_arrows_D.length - 1][0] = arrow_hit_height;
+			Game.enemy_active_arrows_D[Game.enemy_active_arrows_D.length - 1][1] -= 1 / 60;
+		}
+		else{
+			Game.enemy_last_input = 1;
+			Game.enemy_active_arrows_D.pop();
+			Game.enemy_hit_index[1] = hit_animation_duration
+		}
+		//Game.enemy_last_input_time = Game.get_in_round_time();
+		//Game.enemy_last_input = 1;
+		//Game.enemy_active_arrows_D.pop();
+		//Game.enemy_hit_index[1] = hit_animation_duration
 	}
 	if (Game.enemy_active_arrows_A.length != 0 && Game.enemy_active_arrows_A[Game.enemy_active_arrows_A.length - 1][0] < arrow_hit_height2){
-		Game.enemy_last_input_time = Game.get_in_round_time();
-		Game.enemy_last_input = 0;
-		Game.enemy_active_arrows_A.pop();
-		Game.enemy_hit_index[3] = hit_animation_duration
+		//Game.enemy_last_input_time = Game.get_in_round_time();
+		//Game.enemy_last_input = 0;
+		//Game.enemy_active_arrows_A.pop();
+		//Game.enemy_hit_index[3] = hit_animation_duration
+		if( Game.enemy_last_input != 0){
+			Game.enemy_last_input_time = Game.get_in_round_time();
+			Game.enemy_last_input = 0;
+		}
+		if(Game.enemy_active_arrows_A[Game.enemy_active_arrows_A.length - 1][1] > 0){
+			if ( Game.get_in_round_time() - Game.enemy_last_input_time > 0.3){
+				 Game.enemy_last_input_time = Game.get_in_round_time()
+			}
+			Game.enemy_active_arrows_A[Game.enemy_active_arrows_A.length - 1][0] = arrow_hit_height;
+			Game.enemy_active_arrows_A[Game.enemy_active_arrows_A.length - 1][1] -= 1 / 60;
+		}
+		else{
+			Game.enemy_last_input = 0;
+			Game.enemy_active_arrows_A.pop();
+			Game.enemy_hit_index[3] = hit_animation_duration
+		}
 	}
 	//Enemy arrows are moved in Game.update_arrows()
 }
