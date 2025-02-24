@@ -106,7 +106,8 @@ var Game = {
 	enemy_hit_index : [0,0,0,0],
 	recording_mode : false,
 	recorded_sequence : [],
-	P_held : false
+	P_held : false,
+	difficulty : undefined
 };
 
 Game.Compensate_for_bigger_screen = function() {
@@ -414,6 +415,8 @@ Game.load_astrid = function() {
 	Game.ei4.src = "Astrid/export-4.png";
 	//Game.ei5 = new Image();
 	//Game.ei5.src = "./astrid/Idle-5.png";
+	Game.astrid_selection_pic = new Image();
+	Game.astrid_selection_pic.src = "character_selection/astridslct.png"
 	
 	Game.enemy_sprites = [[Game.eleft1, Game.eleft2, Game.eleft3],[Game.eright1, Game.eright2, Game.eright3],[Game.eup1, Game.eup2, Game.eup3],[Game.edown1, Game.edown2, Game.edown3],[Game.ei1, Game.ei2, Game.ei3, Game.ei4]]
 }
@@ -625,10 +628,12 @@ Game.start_screen = function() {
 		}
 		Game.start_menu_position = true;
 		if( Mouse.leftDown == true){
-			Game.health_punishment = 1;
-			Game.start_time = -10;
-			Game.in_menus = false;
-			window.setTimeout(Game.mainLoop(),0);
+			//Game.health_punishment = 1;
+			//Game.start_time = -10;
+			//Game.in_menus = false;
+			//window.setTimeout(Game.mainLoop(),0);
+			Game.difficulty = "hard";
+			window.setTimeout(Game.menu_enemy_select,0);
 			return
 		}
 	}
@@ -640,13 +645,15 @@ Game.start_screen = function() {
 		}
 		Game.start_menu_position = false;
 		if( Mouse.leftDown == true ){
-			Game.health_punishment = 0;
-			Game.score = 7000
-			Game.start_time = 0;
-			Game.level_musix.play();
-			Game.level_musix.currentTime = 0;
-			Game.in_menus = false;
-			window.setTimeout(Game.mainLoop(),0);
+			//Game.health_punishment = 0;
+			//Game.score = 7000
+			//Game.start_time = 0;
+			//Game.level_musix.play();
+			//Game.level_musix.currentTime = 0;
+			//Game.in_menus = false;
+			//window.setTimeout(Game.mainLoop(),0);
+			Game.difficulty = "easy";
+			window.setTimeout(Game.menu_enemy_select)
 			return
 		}
 	}
@@ -659,6 +666,45 @@ Game.start_screen = function() {
 	Game.clearCanvas();
 	Game.draw_start_menu();
 	window.setTimeout(Game.start_screen, 1000/60)
+}
+
+Game.menu_enemy_select = function(difficulty) {
+	if( Game.get_mouse_position([1200, 1800],[0, 900]) ) {
+		if( Mouse.leftDown == true ){
+			if(Game.difficulty == "easy"){
+				Game.health_punishment = 0;
+				Game.score = 7000
+				Game.start_time = 0;
+				Game.level_musix.play();
+				Game.level_musix.currentTime = 0;
+				Game.in_menus = false;
+				window.setTimeout(Game.mainLoop,0);
+				return
+			}
+			else{
+				Game.health_punishment = 1;
+				Game.start_time = -10;
+				Game.in_menus = false;
+				window.setTimeout(Game.mainLoop,0);	
+				return
+			}
+		}
+	}
+	else if( Game.get_mouse_position([0, 300],[0, 900]) ) {
+		if( Mouse.leftDown == true ) {
+			Game.clearCanvas();
+			window.setTimeout(Game.start_screen, 1000/60);
+			return
+		}
+	}
+	Game.clearCanvas();
+	Game.draw_enemy_selection();
+	window.setTimeout(Game.menu_enemy_select, 1000/60);
+}
+
+Game.draw_enemy_selection = function() {
+	Game.drawImage(Game.bakgrundKO, {x:0,y:0})
+	Game.drawImage(Game.astrid_selection_pic, {x:0,y:0})
 }
 
 Game.get_mouse_position = function(xrange, yrange) {
