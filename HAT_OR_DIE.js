@@ -399,11 +399,11 @@ Game.load_astrid = function() {
 	Game.eright3.src = "Astrid/POAEA3r.png";
 	
 	Game.eleft1 = new Image();
-	Game.eleft1.src = "Astrid/Left-1.png";
+	Game.eleft1.src = "Astrid/POAEAl1.png";
 	Game.eleft2 = new Image();
-	Game.eleft2.src = "Astrid/Left-2.png";
+	Game.eleft2.src = "Astrid/POAEAl2.png";
 	Game.eleft3 = new Image();
-	Game.eleft3.src = "Astrid/Left-2.png";
+	Game.eleft3.src = "Astrid/POAEAl3.png";
 	
 	Game.ei1 = new Image();
 	Game.ei1.src = "Astrid/export-1.png";
