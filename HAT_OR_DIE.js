@@ -148,6 +148,7 @@ Game.compensator = function() {
 	for(let index = 0; index < Game.enemy_arrow_sequence.length; ++index) {
 		Game.enemy_arrow_sequence[index][0] -= 800 / (Game.arrow_speed * 60);
 	}	
+	//Game.savefile_debug(Game.enemy_arrow_sequence)
 	//Game.arrow_sequence = Game.arrow_sequence.pop();
 	//console.log('compensated data: ', Game.arrow_sequence);
 }
@@ -378,11 +379,11 @@ Game.load_WIN_animation = function() {
 
 Game.load_astrid = function() {
 	Game.eup1 = new Image();
-	Game.eup1.src = "Astrid/Up-1.png";
+	Game.eup1.src = "Astrid/Up-1n.png";
 	Game.eup2 = new Image();
-	Game.eup2.src = "Astrid/Up-2.png";
+	Game.eup2.src = "Astrid/Up-2n.png";
 	Game.eup3 = new Image();
-	Game.eup3.src = "Astrid/Up-3.png";
+	Game.eup3.src = "Astrid/Up-3n.png";
 	
 	Game.edown1 = new Image();
 	Game.edown1.src = "Astrid/Down-1.png";
@@ -406,19 +407,21 @@ Game.load_astrid = function() {
 	Game.eleft3.src = "Astrid/POAEAl3.png";
 	
 	Game.ei1 = new Image();
-	Game.ei1.src = "Astrid/export-1.png";
+	Game.ei1.src = "Astrid/Idle-1n.png";
 	Game.ei2 = new Image();
-	Game.ei2.src = "Astrid/export-2.png";
+	Game.ei2.src = "Astrid/Idle-2n.png";
 	Game.ei3 = new Image();
-	Game.ei3.src = "Astrid/export-3.png";
+	Game.ei3.src = "Astrid/Idle-3n.png";
 	Game.ei4 = new Image();
-	Game.ei4.src = "Astrid/export-4.png";
-	//Game.ei5 = new Image();
-	//Game.ei5.src = "./astrid/Idle-5.png";
+	Game.ei4.src = "Astrid/Idle-4n.png";
+	Game.ei5 = new Image();
+	Game.ei5.src = "Astrid/Idle-5n.png";
+	Game.ei6 = new Image();
+	Game.ei6.src = "Astrid/Idle-6n.png";
 	Game.astrid_selection_pic = new Image();
 	Game.astrid_selection_pic.src = "character_selection/astrid.png"
 	
-	Game.enemy_sprites = [[Game.eleft1, Game.eleft2, Game.eleft3],[Game.eright1, Game.eright2, Game.eright3],[Game.eup1, Game.eup2, Game.eup3],[Game.edown1, Game.edown2, Game.edown3],[Game.ei1, Game.ei2, Game.ei3, Game.ei4]]
+	Game.enemy_sprites = [[Game.eleft1, Game.eleft2, Game.eleft3],[Game.eright1, Game.eright2, Game.eright3],[Game.eup1, Game.eup2, Game.eup3],[Game.edown1, Game.edown2, Game.edown3],[Game.ei1, Game.ei2, Game.ei3, Game.ei4, Game.ei5, Game.ei6]]
 }
 
 Game.load_UI_elements = function() {
@@ -548,7 +551,7 @@ Game.load_UI_elements = function() {
 Game.load_musix = function() {
 	Game.level_musix = new Audio();
     Game.level_musix.src = "musik/not_fnf.mp4";
-    Game.level_musix.volume = 0.1;
+    Game.level_musix.volume = 0.2;
 	/*
 	Game.death_schreech = new Audio();
 	Game.death_schreech.src = "./audiofx/deth.mp4";
@@ -571,7 +574,7 @@ Game.loadGameData = async function() {
 	}
 	try {
 	//Enemy
-	const response2 = await fetch('./enemy1.json');
+	const response2 = await fetch('Arrow_sequences/enemy_level_1.json');
     if (!response2.ok) {
       throw new Error(`HTTP error! Status: ${response2.status}`);
     }
@@ -672,18 +675,18 @@ Game.menu_enemy_select = function(difficulty) {
 	if( Game.get_mouse_position([1200, 1800],[0, 900]) ) {
 		if( Mouse.leftDown == true ){
 			if(Game.difficulty == "easy"){
-				Game.health_punishment = 0;
-				Game.score = 7000
-				Game.start_time = 0;
-				Game.level_musix.play();
-				Game.level_musix.currentTime = 0;
+				Game.health_punishment = 1;
+				Game.score = 0
+				Game.start_time = -30;
+				//Game.level_musix.play();
+				//Game.level_musix.currentTime = 0;
 				Game.in_menus = false;
 				window.setTimeout(Game.mainLoop,0);
 				return
 			}
 			else{
 				Game.health_punishment = 1;
-				Game.start_time = -10;
+				Game.start_time = -30;
 				Game.in_menus = false;
 				window.setTimeout(Game.mainLoop,0);	
 				return
@@ -859,19 +862,14 @@ Game.increase_health = function() {
 }
 
 Game.decrease_health = function() {
-	Game.score -= 10
+	Game.score -= 10;
+	Game.score -= Game.consequtive_hits;
 	if (Game.player_health > 0){
 		Game.player_health -= Game.health_punishment;
 	}
-	if (Game.player_health > 0){
+	if (Game.player_health > 0 && Game.looking_good == false && Game.difficulty == "hard"){
 		Game.player_health -= Game.health_punishment;
-	}
-	if (Game.player_health > 0 && Game.looking_good == false){
-		Game.player_health -= Game.health_punishment;
-		Game.score -= 20
-	}
-	if (Game.player_health > 0 && Game.looking_good == false){
-		Game.player_health -= Game.health_punishment;
+		//Game.score -= 20
 	}
 	Game.looking_good = false;
 	Game.consequtive_hits = 0;
@@ -1302,7 +1300,7 @@ Game.retry = function() {
 }
 
 Game.restart = function() {
-	Game.player_health = 12;
+	Game.player_health = 20;
 	Game.game_over = false;
 	Game.looking_good = true;
 	Game.time_of_last_input = -3;
@@ -1626,28 +1624,28 @@ Game.draw_enemy = function() {
 Game.draw_idle_enemy = function() {
 	Game.enemy_idle_index += 1;
 	if(Game.enemy_idle_index < 30) {
-		Game.drawImage(Game.enemy_sprites[4][0], {x : 380, y : 10});
+		Game.drawImage(Game.enemy_sprites[4][0], {x : 0, y : 0});
 	}
 	else if(Game.enemy_idle_index < 40) {
-		Game.drawImage(Game.enemy_sprites[4][1], {x : 380, y : 10});
+		Game.drawImage(Game.enemy_sprites[4][1], {x : 0, y : 0});
 	}
 	else if(Game.enemy_idle_index < 50) {
-		Game.drawImage(Game.enemy_sprites[4][2], {x : 380, y : 10});
+		Game.drawImage(Game.enemy_sprites[4][2], {x : 0, y : 0});
 	}
 	else if(Game.enemy_idle_index < 60) {
-		Game.drawImage(Game.enemy_sprites[4][3], {x : 380, y : 10});
+		Game.drawImage(Game.enemy_sprites[4][3], {x : 0, y : 0});
 	}
 	else if(Game.enemy_idle_index < 90) {
-		Game.drawImage(Game.enemy_sprites[4][3], {x : 380, y : 10});
+		Game.drawImage(Game.enemy_sprites[4][4], {x : 0, y : 0});
 	}
 	else if(Game.enemy_idle_index < 100) {
-		Game.drawImage(Game.enemy_sprites[4][2], {x : 380, y : 10});
+		Game.drawImage(Game.enemy_sprites[4][5], {x : 0, y : 0});
 	}
 	else if(Game.enemy_idle_index < 115) {
-		Game.drawImage(Game.enemy_sprites[4][2], {x : 380, y : 10});
+		Game.drawImage(Game.enemy_sprites[4][4], {x : 0, y : 0});
 	}
 	else {
-		Game.drawImage(Game.enemy_sprites[4][1], {x : 380, y : 10});
+		Game.drawImage(Game.enemy_sprites[4][3], {x : 0, y : 0});
 	}
 	if(Game.enemy_idle_index == 130) {
 		Game.enemy_idle_index = 0;
@@ -2172,6 +2170,23 @@ Game.check_user_input_for_recording = function() {
 Game.savefile = function() {
 	// Convert the game data to JSON format
 	const jsonString = JSON.stringify(Game.recorded_sequence, null, 2);
+
+	// Create a Blob
+	const blob = new Blob([jsonString], { type: 'application/json' });
+
+	// Create a download link
+	const link = document.createElement('a');
+	link.href = URL.createObjectURL(blob);
+	link.download = 'sequence_to_' + Game.get_in_round_time().toString() + '.json'; // File name
+	link.click();
+
+	// Clean up
+	URL.revokeObjectURL(link.href);
+}
+
+Game.savefile_debug = function(array) {
+	// Convert the game data to JSON format
+	const jsonString = JSON.stringify(array, null, 2);
 
 	// Create a Blob
 	const blob = new Blob([jsonString], { type: 'application/json' });
