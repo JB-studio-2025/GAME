@@ -135,13 +135,20 @@ Game.start = async function () {
 	Game.load_musix();
 	Game.load_WIN_animation();
 	await Game.loadGameData();
-	Game.compensator();
 	Game.stored_player_sequence = JSON.parse(JSON.stringify(Game.arrow_sequence));
 	Game.stored_enemy_sequence = JSON.parse(JSON.stringify(Game.enemy_arrow_sequence));
+	Game.stored_easy_sequence = JSON.parse(JSON.stringify(Game.arrow_sequence_easy));
     window.setTimeout(Game.start_screen, 500);
 };
 
 Game.compensator = function() {
+	if(Game.difficulty == "easy"){
+		Game.arrow_sequence = JSON.parse(JSON.stringify(Game.stored_easy_sequence));
+	}
+	else{
+		Game.arrow_sequence = JSON.parse(JSON.stringify(Game.stored_player_sequence));
+	}
+	Game.enemy_arrow_sequence = JSON.parse(JSON.stringify(Game.stored_enemy_sequence));
 	for(let index = 0; index < Game.arrow_sequence.length; ++index) {
 		Game.arrow_sequence[index][0] -= (800 / (Game.arrow_speed * 60) - 3.95);
 	}
@@ -376,47 +383,47 @@ Game.load_WIN_animation = function() {
 
 Game.load_astrid = function() {
 	Game.eup1 = new Image();
-	Game.eup1.src = "Astrid/Up-1n.png";
+	Game.eup1.src = "Astrid/up1.png";
 	Game.eup2 = new Image();
-	Game.eup2.src = "Astrid/Up-2n.png";
+	Game.eup2.src = "Astrid/up2.png";
 	Game.eup3 = new Image();
-	Game.eup3.src = "Astrid/Up-3n.png";
+	Game.eup3.src = "Astrid/up3.png";
 	
 	Game.edown1 = new Image();
-	Game.edown1.src = "Astrid/Down-1.png";
+	Game.edown1.src = "Astrid/down1.png";
 	Game.edown2 = new Image();
-	Game.edown2.src = "Astrid/Down-2.png";
+	Game.edown2.src = "Astrid/down2.png";
 	Game.edown3 = new Image();
-	Game.edown3.src = "Astrid/Down-3.png";
+	Game.edown3.src = "Astrid/down3.png";
 	Game.edown4 = new Image();
-	Game.edown4.src = "Astrid/Down-4.png";
+	Game.edown4.src = "Astrid/down4.png";
 	
 	Game.eright1 = new Image();
-	Game.eright1.src = "Astrid/POAEA1r.png";
+	Game.eright1.src = "Astrid/right1.png";
 	Game.eright2 = new Image();
-	Game.eright2.src = "Astrid/POAEA2r.png";
+	Game.eright2.src = "Astrid/right2.png";
 	Game.eright3 = new Image();
-	Game.eright3.src = "Astrid/POAEA3r.png";
+	Game.eright3.src = "Astrid/right3.png";
 	
 	Game.eleft1 = new Image();
-	Game.eleft1.src = "Astrid/POAEAl1.png";
+	Game.eleft1.src = "Astrid/left1.png";
 	Game.eleft2 = new Image();
-	Game.eleft2.src = "Astrid/POAEAl2.png";
+	Game.eleft2.src = "Astrid/left2.png";
 	Game.eleft3 = new Image();
-	Game.eleft3.src = "Astrid/POAEAl3.png";
+	Game.eleft3.src = "Astrid/left3.png";
 	
 	Game.ei1 = new Image();
-	Game.ei1.src = "Astrid/Idle-1n.png";
+	Game.ei1.src = "Astrid/idle1.png";
 	Game.ei2 = new Image();
-	Game.ei2.src = "Astrid/Idle-2n.png";
+	Game.ei2.src = "Astrid/idle2.png";
 	Game.ei3 = new Image();
-	Game.ei3.src = "Astrid/Idle-3n.png";
+	Game.ei3.src = "Astrid/idle3.png";
 	Game.ei4 = new Image();
-	Game.ei4.src = "Astrid/Idle-4n.png";
+	Game.ei4.src = "Astrid/idle4.png";
 	Game.ei5 = new Image();
-	Game.ei5.src = "Astrid/Idle-5n.png";
+	Game.ei5.src = "Astrid/idle5.png";
 	Game.ei6 = new Image();
-	Game.ei6.src = "Astrid/Idle-6n.png";
+	Game.ei6.src = "Astrid/idle6.png";
 	Game.astrid_selection_pic = new Image();
 	Game.astrid_selection_pic.src = "character_selection/astrid.png"
 	Game.astrid_name = new Image();
@@ -572,7 +579,6 @@ Game.load_musix = function() {
 
 Game.loadGameData = async function() {
   try {
-	const timestamp = new Date().getTime(); // Unique timestamp
     const response = await fetch('Arrow_sequences/player_level_1.json');
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
@@ -583,6 +589,18 @@ Game.loadGameData = async function() {
 	} catch (error) {
     console.error('Failed to load player data:', error.message);
 	}
+	try {
+	//Easy
+	const response2 = await fetch('Arrow_sequences/player_level_1_easy.json');
+    if (!response2.ok) {
+      throw new Error(`HTTP error! Status: ${response2.status}`);
+    }
+    const gameData3 = await response2.json();
+	gameData3.pop();
+	Game.arrow_sequence_easy = gameData3;
+  } catch (error) {
+    console.error('Failed to load enemy data:', error.message);
+  }
 	try {
 	//Enemy
 	const response2 = await fetch('Arrow_sequences/enemy_level_1.json');
@@ -647,6 +665,8 @@ Game.start_screen = function() {
 			//Game.in_menus = false;
 			//window.setTimeout(Game.mainLoop(),0);
 			Game.difficulty = "hard";
+			Game.arrow_speed = 7
+			Game.compensator();
 			window.setTimeout(Game.menu_enemy_select,0);
 			return
 		}
@@ -667,6 +687,8 @@ Game.start_screen = function() {
 			//Game.in_menus = false;
 			//window.setTimeout(Game.mainLoop(),0);
 			Game.difficulty = "easy";
+			Game.arrow_speed = 7
+			Game.compensator();
 			window.setTimeout(Game.menu_enemy_select)
 			return
 		}
@@ -841,26 +863,26 @@ Game.draw_bunny = function() {
 //Logic
 
 Game.remove_missed_arrows = function() {
-	if (Game.active_arrows_W.length != 0 && Game.active_arrows_W[Game.active_arrows_W.length - 1][0] <= 0){
+	if (Game.active_arrows_W.length != 0 && Game.active_arrows_W[Game.active_arrows_W.length - 1][0] <= 40){
 		Game.active_arrows_W.pop()
 		Game.decrease_health()
 		Game.time_of_last_input = Game.get_in_round_time()
 		Game.cringe_alert = true;
 		
 	}
-	if (Game.active_arrows_A.length != 0 && Game.active_arrows_A[Game.active_arrows_A.length - 1][0] <= 0){
+	if (Game.active_arrows_A.length != 0 && Game.active_arrows_A[Game.active_arrows_A.length - 1][0] <= 40){
 		Game.active_arrows_A.pop()
 		Game.decrease_health()
 		Game.time_of_last_input = Game.get_in_round_time()
 		Game.cringe_alert = true;
 	}
-	if (Game.active_arrows_S.length != 0 && Game.active_arrows_S[Game.active_arrows_S.length - 1][0] <= 0){
+	if (Game.active_arrows_S.length != 0 && Game.active_arrows_S[Game.active_arrows_S.length - 1][0] <= 40){
 		Game.active_arrows_S.pop()
 		Game.decrease_health()
 		Game.time_of_last_input = Game.get_in_round_time()
 		Game.cringe_alert = true;
 	}
-	if (Game.active_arrows_D.length != 0 && Game.active_arrows_D[Game.active_arrows_D.length - 1][0] <= 0){
+	if (Game.active_arrows_D.length != 0 && Game.active_arrows_D[Game.active_arrows_D.length - 1][0] <= 40){
 		Game.active_arrows_D.pop()
 		Game.decrease_health()
 		Game.time_of_last_input = Game.get_in_round_time()
@@ -869,8 +891,13 @@ Game.remove_missed_arrows = function() {
 }
 
 Game.increase_health = function() {
-	if (Game.player_health < 24 && Game.looking_good){
-		Game.player_health += 1;
+	if (Game.player_health < 24){
+		if(Game.difficulty == "easy"){
+			Game.player_health += 1;
+		}
+		else if(Game.looking_good){
+			Game.player_health += 1;
+		}
 	}
 	Game.score += Game.consequtive_hits;
 	Game.consequtive_hits += 1;
@@ -878,14 +905,18 @@ Game.increase_health = function() {
 }
 
 Game.decrease_health = function() {
-	Game.score -= 10;
-	Game.score -= Game.consequtive_hits;
+	if(Game.difficulty == "easy" && Game.score < 200){
+		Game.score -= Math.floor(0.02 * Game.score + 6)
+	}
+	else{
+		Game.score -= 10;
+		Game.score -= Game.consequtive_hits;
+	}
 	if (Game.player_health > 0){
 		Game.player_health -= Game.health_punishment;
 	}
 	if (Game.player_health > 0 && Game.looking_good == false && Game.difficulty == "hard"){
 		Game.player_health -= Game.health_punishment;
-		//Game.score -= 20
 	}
 	Game.looking_good = false;
 	Game.consequtive_hits = 0;
