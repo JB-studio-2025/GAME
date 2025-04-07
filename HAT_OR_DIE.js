@@ -143,10 +143,10 @@ Game.start = async function () {
 
 Game.compensator = function() {
 	for(let index = 0; index < Game.arrow_sequence.length; ++index) {
-		Game.arrow_sequence[index][0] -= 800 / (Game.arrow_speed * 60);
+		Game.arrow_sequence[index][0] -= (800 / (Game.arrow_speed * 60) - 3.95);
 	}
 	for(let index = 0; index < Game.enemy_arrow_sequence.length; ++index) {
-		Game.enemy_arrow_sequence[index][0] -= 800 / (Game.arrow_speed * 60);
+		Game.enemy_arrow_sequence[index][0] -= ( 800 / (Game.arrow_speed * 60) - 3.95);
 	}	
 	//Game.savefile_debug(Game.enemy_arrow_sequence)
 	//Game.arrow_sequence = Game.arrow_sequence.pop();
@@ -390,7 +390,9 @@ Game.load_astrid = function() {
 	Game.edown2 = new Image();
 	Game.edown2.src = "Astrid/Down-2.png";
 	Game.edown3 = new Image();
-	Game.edown3.src = "Astrid/Down-2.png";
+	Game.edown3.src = "Astrid/Down-3.png";
+	Game.edown4 = new Image();
+	Game.edown4.src = "Astrid/Down-4.png";
 	
 	Game.eright1 = new Image();
 	Game.eright1.src = "Astrid/POAEA1r.png";
@@ -420,8 +422,14 @@ Game.load_astrid = function() {
 	Game.ei6.src = "Astrid/Idle-6n.png";
 	Game.astrid_selection_pic = new Image();
 	Game.astrid_selection_pic.src = "character_selection/astrid.png"
+	Game.astrid_name = new Image();
+	Game.astrid_name.src = "character_selection/astrid_name.png"
+	Game.astrid_hatt1 = new Image();
+	Game.astrid_hatt1.src = "character_selection/HAT.png"
+	Game.astrid_hatt2 = new Image();
+	Game.astrid_hatt2.src = "character_selection/HAT2.png"
 	
-	Game.enemy_sprites = [[Game.eleft1, Game.eleft2, Game.eleft3],[Game.eright1, Game.eright2, Game.eright3],[Game.eup1, Game.eup2, Game.eup3],[Game.edown1, Game.edown2, Game.edown3],[Game.ei1, Game.ei2, Game.ei3, Game.ei4, Game.ei5, Game.ei6]]
+	Game.enemy_sprites = [[Game.eleft1, Game.eleft2, Game.eleft3],[Game.eright1, Game.eright2, Game.eright3],[Game.eup1, Game.eup2, Game.eup3],[Game.edown1, Game.edown2, Game.edown4],[Game.ei1, Game.ei2, Game.ei3, Game.ei4, Game.ei5, Game.ei6]]
 }
 
 Game.load_UI_elements = function() {
@@ -520,10 +528,14 @@ Game.load_UI_elements = function() {
 	Game.scoreboard_IDA_1.src = "end_animations/ida_1.png";
 	Game.scoreboard_IDA_2 = new Image();
 	Game.scoreboard_IDA_2.src = "end_animations/ida_2.png";
+	Game.proceed = new Image();
+	Game.proceed.src = "end_animations/PROCEED.png";
 	Game.scoreboard_congrats = new Image();
 	Game.scoreboard_congrats.src = "UI/congrats.png";
 	Game.fattie = new Image();
 	Game.fattie.src = "UI/fattie.png";
+	Game.obese = new Image();
+	Game.obese.src = "UI/obese.png";
 	Game.scoreboard_page_pic = new Image();
 	Game.scoreboard_page_pic.src = "end_animations/page.png"	
 	Game.scoreboard_page_left = new Image();
@@ -550,7 +562,7 @@ Game.load_UI_elements = function() {
 
 Game.load_musix = function() {
 	Game.level_musix = new Audio();
-    Game.level_musix.src = "musik/not_fnf.mp4";
+    Game.level_musix.src = "musik/not_fnf_with_silent_beginning.mp4";
     Game.level_musix.volume = 0.2;
 	/*
 	Game.death_schreech = new Audio();
@@ -593,7 +605,7 @@ Game.loadGameData = async function() {
         console.log("Game loaded:", Game.highscores);
     } else {
         console.log("No saved game found. Starting fresh.");
-		Game.highscores = [["none", "2"],["none", "1"],["none", "0"]];
+		Game.highscores = []//[["none", "2",false],["none", "1",false],["none", "0",false]];
     }
 	  
 	/*
@@ -613,13 +625,13 @@ Game.loadGameData = async function() {
 document.addEventListener( 'DOMContentLoaded', Game.start);
 
 Game.get_in_round_time = function() {
-	if (Game.level_musix.paused){
-		Game.start_time += 1/60;
-		return Game.start_time;
-	}
-	else{
+	//if (Game.level_musix.paused){
+	//	Game.start_time += 1/60;
+	//	return Game.start_time;
+	//}
+	//else{
 		return Game.level_musix.currentTime;
-	}
+	//}
 }
 
 Game.start_screen = function() {
@@ -672,12 +684,12 @@ Game.start_screen = function() {
 }
 
 Game.menu_enemy_select = function(difficulty) {
-	if( Game.get_mouse_position([1200, 1800],[0, 900]) ) {
+	if( Game.get_mouse_position([1250, 1800],[400, 900]) ) {
 		if( Mouse.leftDown == true ){
 			if(Game.difficulty == "easy"){
 				Game.health_punishment = 1;
 				Game.score = 0
-				Game.start_time = -30;
+				//Game.start_time = -30;
 				//Game.level_musix.play();
 				//Game.level_musix.currentTime = 0;
 				Game.in_menus = false;
@@ -686,7 +698,7 @@ Game.menu_enemy_select = function(difficulty) {
 			}
 			else{
 				Game.health_punishment = 1;
-				Game.start_time = -30;
+				//Game.start_time = -30;
 				Game.in_menus = false;
 				window.setTimeout(Game.mainLoop,0);	
 				return
@@ -708,6 +720,11 @@ Game.menu_enemy_select = function(difficulty) {
 Game.draw_enemy_selection = function() {
 	Game.drawImage(Game.bakgrundKO, {x:0,y:0})
 	Game.drawImage(Game.astrid_selection_pic, {x:0,y:0})
+	Game.drawImage(Game.astrid_name, {x:0,y:0})
+	if( Game.get_mouse_position([1250, 1800],[400, 900]) ) {
+		Game.drawImage(Game.astrid_hatt2, {x:0,y:0})
+	}
+	Game.drawImage(Game.astrid_hatt1, {x:0,y:0})
 }
 
 Game.get_mouse_position = function(xrange, yrange) {
@@ -1160,41 +1177,23 @@ Game.update_enemy_movement = function() {
 	const hit_animation_duration = 3;
 	//Remove arrows when their time has come
 	if (Game.enemy_active_arrows_W.length != 0 && Game.enemy_active_arrows_W[Game.enemy_active_arrows_W.length - 1][0] < arrow_hit_height){
-		if( Game.enemy_last_input != 2){
-			Game.enemy_last_input_time = Game.get_in_round_time();
-			Game.enemy_last_input = 2;
-		}
+		Game.enemy_last_input = 2;
 		if(Game.enemy_active_arrows_W[Game.enemy_active_arrows_W.length - 1][1] > 0){
 			if ( Game.get_in_round_time() - Game.enemy_last_input_time > 0.3){
-				 Game.enemy_last_input_time = Game.get_in_round_time()
+				Game.enemy_last_input_time = Game.get_in_round_time()
 			}
 			Game.enemy_active_arrows_W[Game.enemy_active_arrows_W.length - 1][0] = arrow_hit_height;
 			Game.enemy_active_arrows_W[Game.enemy_active_arrows_W.length - 1][1] -= 1 / 60;
 		}
 		else{
-			Game.enemy_last_input = 2;
+			Game.enemy_last_input_time = Game.get_in_round_time();
 			Game.enemy_active_arrows_W.pop();
 			Game.enemy_hit_index[0] = hit_animation_duration
 		}
-		
-		//if(Game.enemy_active_arrows_W[Game.enemy_active_arrows_W.length - 1][1] > 0){
-	//		Game.enemy_active_arrows_W[Game.enemy_active_arrows_W.length - 1][0] = arrow_hit_height;
-		//	Game.enemy_active_arrows_W[Game.enemy_active_arrows_W.length - 1][1] -= 1 / 60;w
-			//if( Game.get_in_round_time() - Game.enemy_last_input_time > 0.3 ) {
-				//Game.enemy_last_input_time = Game.get_in_round_time();
-			//}
-		//}
-		
-		//Game.enemy_last_input_time = Game.get_in_round_time();
-		//Game.enemy_last_input = 2;
-		//Game.enemy_active_arrows_W.pop();
-		//Game.enemy_hit_index[0] = hit_animation_duration
 	}
+	
 	if (Game.enemy_active_arrows_S.length != 0 && Game.enemy_active_arrows_S[Game.enemy_active_arrows_S.length - 1][0] < arrow_hit_height){
-		if( Game.enemy_last_input != 3){
-			Game.enemy_last_input_time = Game.get_in_round_time();
-			Game.enemy_last_input = 3;
-		}
+		Game.enemy_last_input = 3;
 		if(Game.enemy_active_arrows_S[Game.enemy_active_arrows_S.length - 1][1] > 0){
 			if ( Game.get_in_round_time() - Game.enemy_last_input_time > 0.3){
 				Game.enemy_last_input_time = Game.get_in_round_time()
@@ -1203,20 +1202,14 @@ Game.update_enemy_movement = function() {
 			Game.enemy_active_arrows_S[Game.enemy_active_arrows_S.length - 1][1] -= 1 / 60;
 		}
 		else{
-			Game.enemy_last_input = 3;
+			Game.enemy_last_input_time = Game.get_in_round_time()
 			Game.enemy_active_arrows_S.pop();
 			Game.enemy_hit_index[2] = hit_animation_duration
 		}
-		//Game.enemy_last_input_time = Game.get_in_round_time();
-		//Game.enemy_last_input = 3;
-		//Game.enemy_active_arrows_S.pop();
-		//Game.enemy_hit_index[2] = hit_animation_duration
 	}
+	
 	if (Game.enemy_active_arrows_D.length != 0 && Game.enemy_active_arrows_D[Game.enemy_active_arrows_D.length - 1][0] < arrow_hit_height2){
-		if( Game.enemy_last_input != 1){
-			Game.enemy_last_input_time = Game.get_in_round_time();
-			Game.enemy_last_input = 1;
-		}
+		Game.enemy_last_input = 1;
 		if(Game.enemy_active_arrows_D[Game.enemy_active_arrows_D.length - 1][1] > 0){
 			if ( Game.get_in_round_time() - Game.enemy_last_input_time > 0.3){
 				 Game.enemy_last_input_time = Game.get_in_round_time()
@@ -1225,38 +1218,27 @@ Game.update_enemy_movement = function() {
 			Game.enemy_active_arrows_D[Game.enemy_active_arrows_D.length - 1][1] -= 1 / 60;
 		}
 		else{
-			Game.enemy_last_input = 1;
+			Game.enemy_last_input_time = Game.get_in_round_time()
 			Game.enemy_active_arrows_D.pop();
 			Game.enemy_hit_index[1] = hit_animation_duration
 		}
-		//Game.enemy_last_input_time = Game.get_in_round_time();
-		//Game.enemy_last_input = 1;
-		//Game.enemy_active_arrows_D.pop();
-		//Game.enemy_hit_index[1] = hit_animation_duration
 	}
+	
 	if (Game.enemy_active_arrows_A.length != 0 && Game.enemy_active_arrows_A[Game.enemy_active_arrows_A.length - 1][0] < arrow_hit_height2){
-		//Game.enemy_last_input_time = Game.get_in_round_time();
-		//Game.enemy_last_input = 0;
-		//Game.enemy_active_arrows_A.pop();
-		//Game.enemy_hit_index[3] = hit_animation_duration
-		if( Game.enemy_last_input != 0){
-			Game.enemy_last_input_time = Game.get_in_round_time();
-			Game.enemy_last_input = 0;
-		}
+		Game.enemy_last_input = 0;
 		if(Game.enemy_active_arrows_A[Game.enemy_active_arrows_A.length - 1][1] > 0){
 			if ( Game.get_in_round_time() - Game.enemy_last_input_time > 0.3){
-				 Game.enemy_last_input_time = Game.get_in_round_time()
+				Game.enemy_last_input_time = Game.get_in_round_time()
 			}
 			Game.enemy_active_arrows_A[Game.enemy_active_arrows_A.length - 1][0] = arrow_hit_height;
 			Game.enemy_active_arrows_A[Game.enemy_active_arrows_A.length - 1][1] -= 1 / 60;
 		}
 		else{
-			Game.enemy_last_input = 0;
+			Game.enemy_last_input_time = Game.get_in_round_time()
 			Game.enemy_active_arrows_A.pop();
 			Game.enemy_hit_index[3] = hit_animation_duration
 		}
 	}
-	//Enemy arrows are moved in Game.update_arrows()
 }
 
 Game.retry = function() {
@@ -1341,7 +1323,8 @@ Game.update = function () {
 		Game.create_arrow();
 		Game.check_for_losers();
 		Game.check_for_winners();
-		if (Game.level_musix.paused && Game.get_in_round_time() > 0) {
+		//if (Game.level_musix.paused && Game.get_in_round_time() > 0) {
+		if (Game.level_musix.paused) {
 			Game.level_musix.play();
 		}
 	}
@@ -1448,8 +1431,9 @@ Game.play_animation = function(file_name){
 		if(Game.video.paused){
 			Game.video.play();
 		}
-		Game.drawImage(Game.video, [0,0]);
+		//Game.drawImage(Game.video, [0,0]);
 	}
+	Game.drawImage(Game.video, [0,0]);
 }
 
 Game.clearCanvas = function () {
@@ -1545,7 +1529,7 @@ Game.draw_player = function() {
 Game.draw_win = function(){
 	var position = {x:0, y:0}
 	if(Game.win_index > 100){
-		Game.drawImage(Game.win10, position)
+		//Game.drawImage(Game.win10, position)
 		Game.play_animation();
 		if(Game.win_index > 1300) {
 			Game.draw_scoreboard();
@@ -1747,7 +1731,7 @@ Game.scoreboard_logic = function(){
 		Game.inputname();
 	}
 	else{
-		if(Game.get_mouse_position([1500,1800],[600,900]) && Mouse.leftDown){
+		if(Game.get_mouse_position([1200,1800],[600,900]) && Mouse.leftDown){
 			Game.in_menus = true;
 		}
 	}
@@ -1765,7 +1749,7 @@ Game.save_the_score = function() {
 			i += 1;
 		}
 		else if(Number(Game.highscores[i][1]) < Game.score && inserted != true){
-			newscoreboard.push([Game.name, String(Game.score)]);
+			newscoreboard.push([Game.name, String(Game.score), Game.won]);
 			inserted = true;
 		}
 		
@@ -1776,7 +1760,7 @@ Game.save_the_score = function() {
 	}
 	if (!inserted) {
 		console.log("hah, sämst")
-		newscoreboard.push([Game.name, String(Game.score)]);
+		newscoreboard.push([Game.name, String(Game.score), Game.won]);
 	}
 	Game.highscores = newscoreboard;
 	localStorage.setItem("highscores", JSON.stringify(Game.highscores));
@@ -1825,7 +1809,7 @@ Game.draw_inputted_name = function(){
 	if(Game.won){
 		Game.drawImage(Game.scoreboard_congrats, {x:0, y:0});
 		Game.canvasContext.fillText(String(Game.score),900,330)
-		if(Game.name.length > 5){
+		if(Game.name.length > 9){
 			Game.drawImage(Game.fattie, {x:0, y:0});
 			Game.canvasContext.fillStyle = "#f6985e";
 		}
@@ -1835,7 +1819,7 @@ Game.draw_inputted_name = function(){
 		//Game.drawImage(Game.scoreboard_congrats, {x:0, y:0});
 		Game.canvasContext.fillText(String(Game.score),750,860)
 		if(Game.name.length > 9){
-			Game.drawImage(Game.fattie, {x:0, y:0});
+			Game.drawImage(Game.obese, {x:550, y:-50});
 			Game.canvasContext.fillStyle = "#f6985e";
 		}
 		Game.canvasContext.fillText(Game.name, 700, 790)
@@ -1850,13 +1834,14 @@ Game.draw_scoreboard = function(){
 	else{
 		Game.drawImage(Game.scoreboard_background, pos);
 		Game.drawImage(Game.scoreboard_text, pos);
-		Game.canvasContext.font = "40px Times New Roman";
-		Game.canvasContext.fillStyle = "white";
-		Game.canvasContext.textAlign = "left";
+		//Game.canvasContext.font = "40px Times New Roman";
+		//Game.canvasContext.fillStyle = "white";
+		//Game.canvasContext.textAlign = "left";
 		
 		Game.scoreboard_draw_the_names();
 		Game.scoreboard_buttons();
 		Game.scoreboard_side_animations();
+		Game.drawImage(Game.proceed, {x : 0, y : 0});
 		//Game.drawImage(Game.scoreboard_button, {x : 1500, y : 500})
 	}
 }
@@ -1920,6 +1905,12 @@ Game.scoreboard_draw_the_names = function() {
 		if(score + 20 * Game.scoreboard_page >= Game.highscores.length){
 			break
 		}
+		if(Game.highscores[score + 20 * Game.scoreboard_page][2] == true){
+			Game.canvasContext.fillStyle = "#f6985e";
+		}
+		else{
+			Game.canvasContext.fillStyle = "#FFFFFF";
+		}
 		Game.canvasContext.fillText(Game.highscores[score + 20 * Game.scoreboard_page][0], 200, ypos)
 		Game.canvasContext.fillText(Game.highscores[score + 20 * Game.scoreboard_page][1], 500, ypos)
 		ypos += 60
@@ -1928,6 +1919,12 @@ Game.scoreboard_draw_the_names = function() {
 	for(let score = 10; score < 20; score++){
 		if(score + 20 * Game.scoreboard_page >= Game.highscores.length){
 			break
+		}
+		if(Game.highscores[score + 20 * Game.scoreboard_page][2] == true){
+			Game.canvasContext.fillStyle = "#f6985e";
+		}
+		else{
+			Game.canvasContext.fillStyle = "#FFFFFF";
 		}
 		Game.canvasContext.fillText(Game.highscores[score + 20 * Game.scoreboard_page][0], 700, ypos)
 		Game.canvasContext.fillText(Game.highscores[score + 20 * Game.scoreboard_page][1], 1000, ypos)
