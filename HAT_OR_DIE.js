@@ -147,10 +147,7 @@ Game.compensator = function() {
 	}
 	for(let index = 0; index < Game.enemy_arrow_sequence.length; ++index) {
 		Game.enemy_arrow_sequence[index][0] -= ( 800 / (Game.arrow_speed * 60) - 3.95);
-	}	
-	//Game.savefile_debug(Game.enemy_arrow_sequence)
-	//Game.arrow_sequence = Game.arrow_sequence.pop();
-	//console.log('compensated data: ', Game.arrow_sequence);
+	}
 }
 
 Game.load_arrows = function() {
@@ -530,6 +527,8 @@ Game.load_UI_elements = function() {
 	Game.scoreboard_IDA_2.src = "end_animations/ida_2.png";
 	Game.proceed = new Image();
 	Game.proceed.src = "end_animations/PROCEED.png";
+	Game.proceed2 = new Image();
+	Game.proceed2.src = "end_animations/proceedblur.png";
 	Game.scoreboard_congrats = new Image();
 	Game.scoreboard_congrats.src = "UI/congrats.png";
 	Game.fattie = new Image();
@@ -1731,7 +1730,7 @@ Game.scoreboard_logic = function(){
 		Game.inputname();
 	}
 	else{
-		if(Game.get_mouse_position([1200,1800],[600,900]) && Mouse.leftDown){
+		if(Game.get_mouse_position([1240,1800],[730,900]) && Mouse.leftDown){
 			Game.in_menus = true;
 		}
 	}
@@ -1841,6 +1840,9 @@ Game.draw_scoreboard = function(){
 		Game.scoreboard_draw_the_names();
 		Game.scoreboard_buttons();
 		Game.scoreboard_side_animations();
+		if(Game.get_mouse_position([1240,1800],[730,900])){
+			Game.drawImage(Game.proceed2, {x:0, y:0});
+		}
 		Game.drawImage(Game.proceed, {x : 0, y : 0});
 		//Game.drawImage(Game.scoreboard_button, {x : 1500, y : 500})
 	}
